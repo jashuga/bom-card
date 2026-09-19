@@ -1,4 +1,4 @@
-# NAME HERE
+# Bom-card
 
 ### Team Members
 - Ian McDowell (ianstagramcd@gmail.com)
@@ -24,5 +24,6 @@ Some of the deeper implementation details of the game's inner workings were espe
 ## What we learned
 This was many of our teams' first experience with Godot, and together we quickly learned to put together scenes and nodes into a complete game.
 
-## What's next for Untitled
+## What's next for Bom-card
+The 24 hour time constraint necessitated that we overlook some scope in the name of making a complete product. Fleshing out the game with more ammo types and enemies will take much longer, but will give it more replayability.
 
