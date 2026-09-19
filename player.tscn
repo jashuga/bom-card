@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://b0pwgsjd6m55c" path="res://EnemyWaveHandler.cs" id="2_onrkg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dkqkh"]
-size = Vector2(24, 24)
 
 [node name="Node2D" type="Node2D" unique_id=1129001604]
 
@@ -18,10 +17,7 @@ position = Vector2(400, 400)
 script = ExtResource("1_4flbx")
 
 [node name="Player_Sprite" type="Sprite2D" parent="Player" unique_id=871609606]
-<<<<<<< Updated upstream
 texture_filter = 1
-=======
->>>>>>> Stashed changes
 texture = ExtResource("2_i3pqv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=852571050]
@@ -40,32 +36,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_onrkg")
-
-[node name="CardMenu" type="Control" parent="." unique_id=581217326]
-custom_minimum_size = Vector2(960, 960)
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="CardHolder" type="GridContainer" parent="CardMenu" unique_id=1365779438]
-custom_minimum_size = Vector2(960, 960)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-columns = 3
-
-[node name="Button1" type="Button" parent="CardMenu/CardHolder" unique_id=845841769]
-layout_mode = 2
-text = "BUTTON 1"
-
-[node name="Button2" type="Button" parent="CardMenu/CardHolder" unique_id=121064942]
-layout_mode = 2
-text = "BUTTON 2"
-
-[node name="Button3" type="Button" parent="CardMenu/CardHolder" unique_id=992279186]
-layout_mode = 2
-text = "BUTTON 3"
 
 [connection signal="timeout" from="NextPhaseTimer" to="EnemyWaveHandler" method="OnNextPhaseTimerTimeout"]
 [connection signal="timeout" from="NewCardTimer" to="Player" method="OnNewCardTimerTimeout"]
