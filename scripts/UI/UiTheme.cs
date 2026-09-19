@@ -18,8 +18,33 @@ public static class UiTheme
 	public static readonly Color TrackFill = new(1f, 1f, 1f, 0.12f);
 
 	private static Font _font;
+	private static bool _fontResolved;
 
-	public static Font Font => _font ??= ResourceLoader.Load<Font>(FontPath);
+	/// <summary>
+	/// The pixel font, or null if it isn't in the project — every caller already null-checks
+	/// and falls back to Godot's default font.
+	///
+	/// Must go through ResourceLoader.Exists first: ResourceLoader.Load THROWS on a missing
+	/// resource rather than returning null, which took the whole DraftScreen down when this
+	/// font was deleted upstream. The resolved result is cached either way, so a missing font
+	/// costs one lookup rather than one per label.
+	/// </summary>
+	public static Font Font
+	{
+		get
+		{
+			if (_fontResolved)
+				return _font;
+
+			_fontResolved = true;
+			_font = ResourceLoader.Exists(FontPath) ? ResourceLoader.Load<Font>(FontPath) : null;
+
+			if (_font == null)
+				GD.Print($"UiTheme: {FontPath} not found — using the default font.");
+
+			return _font;
+		}
+	}
 
 	public static Label MakeLabel(string text, int size, Color? color = null)
 	{

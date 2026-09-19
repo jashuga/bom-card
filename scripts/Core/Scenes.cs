@@ -21,14 +21,15 @@ public static class Scenes
 		return scene;
 	}
 
-	// Bullets — one scene per ammo subclass.
-	public static PackedScene BasicBullet => Get("res://scenes/bullets/BasicBullet.tscn");
-	public static PackedScene StandardBullet => Get("res://scenes/bullets/StandardBullet.tscn");
-	public static PackedScene PiercingBullet => Get("res://scenes/bullets/PiercingBullet.tscn");
-	public static PackedScene ExplosiveBullet => Get("res://scenes/bullets/ExplosiveBullet.tscn");
-	public static PackedScene RicochetBullet => Get("res://scenes/bullets/RicochetBullet.tscn");
-	public static PackedScene HomingBullet => Get("res://scenes/bullets/HomingBullet.tscn");
-	public static PackedScene LaserBullet => Get("res://scenes/bullets/LaserBullet.tscn");
+	// Special ammo — one scene per Projectile subclass. Named *Round to stay clear of the
+	// root-level *Bullet classes; two script classes may not differ only by case (CS8785).
+	public static PackedScene BasicRound => Get("res://scenes/ammo/BasicRound.tscn");
+	public static PackedScene StandardRound => Get("res://scenes/ammo/StandardRound.tscn");
+	public static PackedScene PiercingRound => Get("res://scenes/ammo/PiercingRound.tscn");
+	public static PackedScene ExplosiveRound => Get("res://scenes/ammo/ExplosiveRound.tscn");
+	public static PackedScene RicochetRound => Get("res://scenes/ammo/RicochetRound.tscn");
+	public static PackedScene HomingRound => Get("res://scenes/ammo/HomingRound.tscn");
+	public static PackedScene LaserRound => Get("res://scenes/ammo/LaserRound.tscn");
 
 	// Actors.
 	public static PackedScene Player => Get("res://scenes/Player.tscn");

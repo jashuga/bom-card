@@ -45,7 +45,7 @@ public partial class ShooterEnemy : EnemyBase
 		if (_bulletContainer == null)
 			return;
 
-		var bullet = Scenes.BasicBullet.Instantiate<BasicBullet>();
+		var bullet = Scenes.BasicRound.Instantiate<BasicRound>();
 		bullet.Direction = direction;
 		bullet.Shooter = this;
 		bullet.Hostile = true;

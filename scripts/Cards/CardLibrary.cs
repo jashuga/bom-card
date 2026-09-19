@@ -13,24 +13,24 @@ public static class CardLibrary
 	{
 		// ---- Common ammo (mag 30) -------------------------------------------------
 		new AmmoCard("Standard Rounds", "30 rounds. Faster, harder-hitting bullets for the Sidearm.",
-			Rarity.Common, () => new Magazine("Standard", Rarity.Common, Scenes.StandardBullet)),
+			Rarity.Common, () => new Magazine("Standard", Rarity.Common, Scenes.StandardRound)),
 
 		new AmmoCard("Piercing Rounds", "30 rounds. Passes through up to 4 enemies.",
-			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingBullet, fireRateMultiplier: 0.8f)),
+			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingRound, fireRateMultiplier: 0.8f)),
 
 		// ---- Rare ammo (mag 12) ---------------------------------------------------
 		new AmmoCard("Explosive Shells", "12 rounds. Detonates on impact for area damage.",
-			Rarity.Rare, () => new Magazine("Explosive", Rarity.Rare, Scenes.ExplosiveBullet)),
+			Rarity.Rare, () => new Magazine("Explosive", Rarity.Rare, Scenes.ExplosiveRound)),
 
 		new AmmoCard("Ricochet Rounds", "12 rounds. Bounces off walls up to 4 times.",
-			Rarity.Rare, () => new Magazine("Ricochet", Rarity.Rare, Scenes.RicochetBullet, fireRateMultiplier: 1.2f)),
+			Rarity.Rare, () => new Magazine("Ricochet", Rarity.Rare, Scenes.RicochetRound, fireRateMultiplier: 1.2f)),
 
 		// ---- Epic ammo (mag 4) ----------------------------------------------------
 		new AmmoCard("Homing Missiles", "4 rounds. Seeks the nearest enemy and detonates.",
-			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingBullet, fireRateMultiplier: 0.8f)),
+			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
 
 		new AmmoCard("Laser Cells", "4 rounds. Instant beam that burns through everything in a line.",
-			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserBullet)),
+			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound)),
 
 		// ---- Sustain --------------------------------------------------------------
 		new HealCard("Field Repair", "Restore 35 health.", Rarity.Common, heal: 35f),
