@@ -11,8 +11,8 @@ public partial class ShooterEnemy : EnemyBase
 	/// <summary>Each shot waits a fresh random gap in [Min, Max], so a pack of them never fires in lockstep.</summary>
 	[Export] public float FireIntervalMin = 2f;
 	[Export] public float FireIntervalMax = 3f;
-	[Export] public float BulletDamage = 8f;
-	[Export] public float BulletSpeed = 420f;
+	[Export] public float BulletDamage = 9f;
+	[Export] public float BulletSpeed = 470f;
 
 	private readonly RandomNumberGenerator _rng = new();
 	private double _cooldown;
@@ -33,7 +33,7 @@ public partial class ShooterEnemy : EnemyBase
 		else if (distance < PreferredRange - RangeTolerance)
 			Steer(-toPlayer, delta);
 		else
-			Steer(toPlayer.Orthogonal(), delta, 0.5f); // strafe
+			Steer(toPlayer.Orthogonal(), delta, 0.7f); // strafe — enough to not be a sitting duck
 
 		_cooldown -= delta;
 		if (_cooldown <= 0.0 && toPlayer != Vector2.Zero)

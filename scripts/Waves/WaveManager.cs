@@ -24,10 +24,24 @@ public partial class WaveManager : Node
 	[Export] public int EnemiesPerWave = 2;
 	[Export] public int MaxEnemyCount = 26;
 
-	/// <summary>Tanks start showing up here, then one more every <see cref="WavesPerExtraTank"/>.</summary>
-	[Export] public int FirstTankWave = 3;
+	// Introduction schedule: wave 1 shooters only, 2-3 adds chasers, 4-5 adds tanks,
+	// 6-7 adds snipers. One new thing at a time, each given a couple of waves to land.
+
+	/// <summary>Opening waves are nothing but shooters, so the basic threat is legible first.</summary>
+	[Export] public int ShooterOnlyWaves = 1;
+
+	/// <summary>Tanks debut here at one, then one more every <see cref="WavesPerExtraTank"/>.</summary>
+	[Export] public int FirstTankWave = 4;
 	[Export] public int WavesPerExtraTank = 3;
 	[Export] public int MaxTankCount = 3;
+
+	/// <summary>Snipers debut here at one, then one more every <see cref="WavesPerExtraSniper"/>.</summary>
+	[Export] public int FirstSniperWave = 6;
+	[Export] public int WavesPerExtraSniper = 2;
+	[Export] public int MaxSniperCount = 6;
+
+	/// <summary>Chaser share of a wave once the specials are accounted for. Shooters fill the rest.</summary>
+	[Export] public float MeleeRatio = 0.35f;
 
 	/// <summary>Enemy max health is multiplied by 1 + wave * this.</summary>
 	[Export] public float HealthScalePerWave = 0.12f;
@@ -78,25 +92,44 @@ public partial class WaveManager : Node
 
 		int total = Mathf.Min(MaxEnemyCount, BaseEnemyCount + wave * EnemiesPerWave);
 
+		var roster = new List<PackedScene>(total);
+
+		if (wave <= ShooterOnlyWaves)
+		{
+			AddCopies(roster, Scenes.ShooterEnemy, total);
+			QueueRoster(roster, wave, total);
+			return;
+		}
+
 		// Tanks are a slow trickle — they're a wall to work around, not the bulk of a wave.
 		int tanks = wave >= FirstTankWave
 			? Mathf.Min(MaxTankCount, 1 + (wave - FirstTankWave) / Mathf.Max(1, WavesPerExtraTank))
 			: 0;
 		tanks = Mathf.Min(tanks, total);
 
-		// Shooters take their cut of what's left, so tanks displace chaff rather than adding to it.
-		float shooterRatio = Mathf.Clamp(0.15f + wave * 0.06f, 0f, 0.5f);
-		int shooters = Mathf.RoundToInt((total - tanks) * shooterRatio);
+		// Debut is a single sniper, then a gradual build — same shape as the tank ramp.
+		int snipers = wave >= FirstSniperWave
+			? Mathf.Min(MaxSniperCount, 1 + (wave - FirstSniperWave) / Mathf.Max(1, WavesPerExtraSniper))
+			: 0;
+		snipers = Mathf.Min(snipers, total - tanks);
 
-		var roster = new List<PackedScene>(total);
-		for (int i = 0; i < total; i++)
-		{
-			roster.Add(i < tanks ? Scenes.TankEnemy
-				: i < tanks + shooters ? Scenes.ShooterEnemy
-				: Scenes.MeleeEnemy);
-		}
+		// Specials displace chaff rather than adding to it; chasers take a fixed cut of the
+		// rest and shooters fill out the wave, which keeps them the staple enemy.
+		int remainder = total - tanks - snipers;
+		int melee = Mathf.RoundToInt(remainder * Mathf.Clamp(MeleeRatio, 0f, 1f));
 
-		// Fisher-Yates so shooters aren't all front-loaded.
+		AddCopies(roster, Scenes.TankEnemy, tanks);
+		AddCopies(roster, Scenes.SniperEnemy, snipers);
+		AddCopies(roster, Scenes.MeleeEnemy, melee);
+		AddCopies(roster, Scenes.ShooterEnemy, total - roster.Count);
+
+		QueueRoster(roster, wave, total);
+	}
+
+	/// <summary>Shuffle a built roster into the spawn queue and announce the wave.</summary>
+	private void QueueRoster(List<PackedScene> roster, int wave, int total)
+	{
+		// Fisher-Yates so the ranged types aren't all front-loaded.
 		for (int i = roster.Count - 1; i > 0; i--)
 		{
 			int j = _rng.RandiRange(0, i);
@@ -139,8 +172,17 @@ public partial class WaveManager : Node
 		float scale = 1f + CurrentWave * HealthScalePerWave;
 		enemy.Health.AddMaxHealth(enemy.Health.Max * (scale - 1f));
 
+		// Types that ramp over a run (chaser speed, say) tune themselves here.
+		enemy.ApplyWaveScaling(CurrentWave);
+
 		_alive++;
 		EmitSignal(SignalName.EnemyCountChanged, Remaining);
+	}
+
+	private static void AddCopies(List<PackedScene> roster, PackedScene scene, int count)
+	{
+		for (int i = 0; i < count; i++)
+			roster.Add(scene);
 	}
 
 	private Vector2 RandomEdgePosition()

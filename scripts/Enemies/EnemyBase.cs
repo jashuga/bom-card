@@ -16,6 +16,12 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	/// <summary>Turn rate in radians/sec for enemies that call <see cref="FacePlayer"/>. 0 snaps instantly.</summary>
 	[Export] public float TurnSpeed = 12f;
 
+	/// <summary>Enemies inside this range shove each other apart so they don't stack into one blob.</summary>
+	[Export] public float SeparationRadius = 46f;
+
+	/// <summary>How hard that shove pulls against where the enemy actually wants to go. 0 disables it.</summary>
+	[Export] public float SeparationWeight = 0.8f;
+
 	public Health Health { get; private set; }
 	public bool IsAlive => Health != null && Health.IsAlive;
 
@@ -62,15 +68,24 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	protected virtual void OnSpawn() { }
 
 	/// <summary>
+	/// Called by the spawner right after this enemy enters the tree, so a type can scale itself
+	/// to how far into the run we are. Health scaling is the spawner's job — this is for
+	/// anything a specific type wants to ramp. Default does nothing.
+	/// </summary>
+	public virtual void ApplyWaveScaling(int wave) { }
+
+	/// <summary>
 	/// Turn to look at the player. Opt-in — call it from <see cref="Act"/>; enemies that don't
 	/// stay at their spawn rotation. Rotating the root rather than just the sprite keeps the
 	/// muzzle offset and any child markers aligned — the collider is a circle, so spinning it
 	/// costs nothing. The +PI/2 is because the art points up at zero rotation, same convention
 	/// as the player and the projectiles.
 	/// </summary>
-	protected virtual void FacePlayer(double delta)
+	protected virtual void FacePlayer(double delta) => FaceDirection(DirectionToPlayer, delta);
+
+	/// <summary>Turn to look along <paramref name="facing"/>, capped by <see cref="TurnSpeed"/>.</summary>
+	protected void FaceDirection(Vector2 facing, double delta)
 	{
-		Vector2 facing = DirectionToPlayer;
 		if (facing == Vector2.Zero)
 			return;
 
@@ -125,9 +140,49 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		container.AddChild(bullet);
 	}
 
+	/// <summary>
+	/// Move toward <paramref name="desiredDirection"/>, with crowd separation mixed in. Every
+	/// enemy type steers through here, so none of them pile into the same spot — including the
+	/// ones whose desired direction is "hold still".
+	/// </summary>
 	protected void Steer(Vector2 desiredDirection, double delta, float speedScale = 1f)
 	{
+		Vector2 separation = SeparationVector();
+		if (separation != Vector2.Zero)
+		{
+			desiredDirection = desiredDirection == Vector2.Zero
+				? separation * SeparationWeight
+				: (desiredDirection + separation * SeparationWeight).Normalized();
+		}
+
 		Velocity = Velocity.MoveToward(desiredDirection * MoveSpeed * speedScale, Acceleration * (float)delta);
+	}
+
+	/// <summary>
+	/// Unit push away from nearby enemies, or Zero when there's room. Closer neighbours count
+	/// for more, so a tight knot breaks up faster than a loose one.
+	/// </summary>
+	protected Vector2 SeparationVector()
+	{
+		if (SeparationWeight <= 0f || SeparationRadius <= 0f)
+			return Vector2.Zero;
+
+		Vector2 push = Vector2.Zero;
+
+		foreach (Node node in GetTree().GetNodesInGroup(Groups.Enemies))
+		{
+			if (node == this || node is not Node2D other || !IsInstanceValid(other))
+				continue;
+
+			Vector2 away = GlobalPosition - other.GlobalPosition;
+			float distance = away.Length();
+			if (distance <= 0.001f || distance > SeparationRadius)
+				continue;
+
+			push += away / distance * (1f - distance / SeparationRadius);
+		}
+
+		return push == Vector2.Zero ? Vector2.Zero : push.Normalized();
 	}
 
 	public void TakeDamage(float amount, Node2D source)

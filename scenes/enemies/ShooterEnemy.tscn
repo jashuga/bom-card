@@ -13,7 +13,8 @@ motion_mode = 1
 collision_layer = 4
 collision_mask = 7
 script = ExtResource("1_shooter")
-MoveSpeed = 105.0
+MoveSpeed = 125.0
+Acceleration = 1100.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 scale = Vector2(2, 2)
@@ -24,4 +25,4 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
-Max = 34.0
+Max = 40.0
