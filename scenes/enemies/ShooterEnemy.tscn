@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/Enemies/ShooterEnemy.cs" id="1_shooter"]
 [ext_resource type="Script" path="res://scripts/Core/Health.cs" id="2_health"]
-[ext_resource type="Texture2D" uid="uid://gb7wniy8iv8w" path="res://assets/enemies/enemy_2.png" id="3_sprite"]
+[ext_resource type="Texture2D" uid="uid://dimyj8n3t0yqi" path="res://assets/enemies/enemy_2.png" id="3_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 17.0
