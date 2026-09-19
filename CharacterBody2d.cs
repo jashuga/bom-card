@@ -80,4 +80,11 @@ public partial class CharacterBody2d : CharacterBody2D
 	{
 		AddAmmo(typeof(bullet));
 	}
+
+	private void OnNewEnemyTimerTimeout()
+	{
+		var enemy = (CharacterBody2D)GD.Load<PackedScene>("res://enemy.tscn").Instantiate();
+		enemy.Position = new Vector2(100, 100);
+		AddSibling(enemy);
+	}
 }

@@ -5,8 +5,17 @@
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dkqkh"]
 size = Vector2(9, 9)
 
-[node name="Bullet" type="CharacterBody2D" unique_id=71476484]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dkqkh"]
+size = Vector2(9, 10)
+
+[node name="Bullet" type="Area2D" unique_id=1626693754]
 script = ExtResource("1_v7oki")
 
 [node name="BulletSprite" type="Sprite2D" parent="." unique_id=313357146]
 texture = SubResource("PlaceholderTexture2D_dkqkh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=828573814]
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_dkqkh")
+
+[connection signal="body_entered" from="." to="." method="OnBulletEntered"]

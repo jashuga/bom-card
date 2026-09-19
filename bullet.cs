@@ -12,7 +12,7 @@ namespace enums{
 
 }
 
-public partial class bullet : CharacterBody2D
+public partial class bullet : Area2D
 {
 	
 	//default bullet type is primary
@@ -28,8 +28,15 @@ public partial class bullet : CharacterBody2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		Vector2 velocity = Velocity;
-		velocity.Y *= 100;
-		Velocity = velocity;
+		//temporary code to move bullet up
+		//for debugging
+		Vector2 velocity = new Vector2();
+		velocity.Y = -100;
+		Position += velocity * (float)delta;
+	}
+
+	private void OnBulletEntered(Enemy e)
+	{
+		GD.Print("Enemy hit:" + e);
 	}
 }
