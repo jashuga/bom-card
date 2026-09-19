@@ -15,9 +15,12 @@ collision_mask = 7
 motion_mode = 1
 script = ExtResource("1_melee")
 MoveSpeed = 215.0
+Acceleration = 1800.0
+TurnSpeed = 18.0
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1883105332]
 scale = Vector2(2, 2)
+flip_v = true
 texture = ExtResource("3_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=272548247]
