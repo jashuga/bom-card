@@ -10,6 +10,15 @@ public partial class CharacterBody2d : CharacterBody2D
 	private Queue SecondaryQueue = new Queue();
 	private Queue UltimateQueue = new Queue();
 
+	private int health = 10;
+	private bool invincible = false;
+	
+	Timer invincibilityTimer;
+	//Called when player enteres the scene tree for the first time
+	public override void _Ready()
+	{
+		invincibilityTimer = GetNode<Timer>("../InvincibilityTimer");
+	}
 	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
@@ -22,8 +31,6 @@ public partial class CharacterBody2d : CharacterBody2D
 		{
 			velocity.X = direction.X * Speed;
 			velocity.Y = direction.Y * Speed;
-			GD.Print("Direction: " + direction);
-			GD.Print("Velocity: " + velocity);
 		}
 		else
 		{
@@ -32,27 +39,49 @@ public partial class CharacterBody2d : CharacterBody2D
 		}
 
 		Velocity = velocity;
-		MoveAndSlide();
+		var collision = MoveAndCollide(Velocity * (float)delta);
+		if (collision != null)
+		{
+			if(collision.GetCollider() is Enemy e)
+			{
+				OnCollision(e);
+			}
+		}
 	}
-	    public override void _Input(InputEvent @event)
-    {
-        //shoot is space bar ot left click
-        //upon shooting creates a bullet
-        if (@event.IsActionPressed("primary"))
-			SpawnObject(GD.Load<PackedScene>($"res://bullet.tscn").Instantiate() as bullet);
-        {
-           
-        }
-		if (@event.IsActionPressed("secondary"))
-        {
-           SpawnObject(SecondaryQueue.Dequeue() as bullet);
-        }
-		if (@event.IsActionPressed("ultimate"))
-        {
-        	SpawnObject(UltimateQueue.Dequeue() as bullet);
-        }
 
-    }
+	private void OnInvincibilityTimeout()
+	{
+		invincible = false;
+	}
+
+	public void OnCollision(Enemy e)
+	{
+		if (!invincible)
+		{
+			invincible = true;
+			invincibilityTimer.Start();
+			GD.Print("Damage");
+			health--;
+		}
+	}
+	public override void _Input(InputEvent @event)
+	{
+		//shoot is space bar ot left click
+		//upon shooting creates a bullet
+		if (@event.IsActionPressed("primary"))
+		{
+			SpawnObject(GD.Load<PackedScene>($"res://bullet.tscn").Instantiate() as bullet);
+		}
+		if (@event.IsActionPressed("secondary"))
+		{
+			SpawnObject(SecondaryQueue.Dequeue() as bullet);
+		}
+		if (@event.IsActionPressed("ultimate"))
+		{
+			SpawnObject(UltimateQueue.Dequeue() as bullet);
+		}
+
+	}
 
 	private void SpawnObject(bullet b)
 	{
@@ -63,15 +92,17 @@ public partial class CharacterBody2d : CharacterBody2D
 	{
 		bullet bulletScene = (bullet)GD.Load<PackedScene>($"res://{nameof(bullet)}.tscn").Instantiate();
 		bulletScene.BulletType = BulletTypes.SECONDARY;
-		if(bulletScene.BulletType == BulletTypes.PRIMARY){
+		if (bulletScene.BulletType == BulletTypes.PRIMARY)
+		{
 			GD.Print("Primary Bullet");
 			PrimaryQueue.Enqueue(bulletScene);
 		}
-		else if(bulletScene.BulletType == BulletTypes.SECONDARY){
+		else if (bulletScene.BulletType == BulletTypes.SECONDARY)
+		{
 			SecondaryQueue.Enqueue(bulletScene);
-			GD.Print("Secondary Bullet");
 		}
-		else if(bulletScene.BulletType == BulletTypes.ULTIMATE){
+		else if (bulletScene.BulletType == BulletTypes.ULTIMATE)
+		{
 			UltimateQueue.Enqueue(bulletScene);
 			GD.Print("Ultimate Bullet");
 		}
@@ -79,5 +110,12 @@ public partial class CharacterBody2d : CharacterBody2D
 	private void OnNewCardTimerTimeout()
 	{
 		AddAmmo(typeof(bullet));
+	}
+
+	private void OnNewEnemyTimerTimeout()
+	{
+		var enemy = (Enemy)GD.Load<PackedScene>("res://enemy.tscn").Instantiate();
+		enemy.Position = new Vector2(100, 100);
+		AddSibling(enemy);
 	}
 }
