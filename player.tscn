@@ -25,5 +25,10 @@ shape = SubResource("RectangleShape2D_dkqkh")
 [node name="NewCardTimer" type="Timer" parent="." unique_id=880246919]
 autostart = true
 
+[node name="InvincibilityTimer" type="Timer" parent="." unique_id=683801164]
+wait_time = 0.5
+one_shot = true
+
 [connection signal="timeout" from="NewEnemyTimer" to="Player" method="OnNewEnemyTimerTimeout"]
 [connection signal="timeout" from="NewCardTimer" to="Player" method="OnNewCardTimerTimeout"]
+[connection signal="timeout" from="InvincibilityTimer" to="Player" method="OnInvincibilityTimeout"]

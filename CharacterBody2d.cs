@@ -10,6 +10,15 @@ public partial class CharacterBody2d : CharacterBody2D
 	private Queue SecondaryQueue = new Queue();
 	private Queue UltimateQueue = new Queue();
 
+	private int health = 10;
+	private bool invincible = false;
+	
+	Timer invincibilityTimer;
+	//Called when player enteres the scene tree for the first time
+	public override void _Ready()
+	{
+		invincibilityTimer = GetNode<Timer>("../InvincibilityTimer");
+	}
 	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
@@ -36,14 +45,24 @@ public partial class CharacterBody2d : CharacterBody2D
 			if(collision.GetCollider() is Enemy e)
 			{
 				OnCollision(e);
-				GD.Print("Collided with Enemy");
 			}
 		}
 	}
 
+	private void OnInvincibilityTimeout()
+	{
+		invincible = false;
+	}
+
 	public void OnCollision(Enemy e)
 	{
-		
+		if (!invincible)
+		{
+			invincible = true;
+			invincibilityTimer.Start();
+			GD.Print("Damage");
+			health--;
+		}
 	}
 	public override void _Input(InputEvent @event)
 	{
