@@ -8,15 +8,19 @@ public partial class ShooterEnemy : EnemyBase
 {
 	[Export] public float PreferredRange = 280f;
 	[Export] public float RangeTolerance = 60f;
-	[Export] public float FireInterval = 1.4f;
+	/// <summary>Each shot waits a fresh random gap in [Min, Max], so a pack of them never fires in lockstep.</summary>
+	[Export] public float FireIntervalMin = 2f;
+	[Export] public float FireIntervalMax = 3f;
 	[Export] public float BulletDamage = 8f;
 
+	private readonly RandomNumberGenerator _rng = new();
 	private double _cooldown;
 	private Node _bulletContainer;
 
 	protected override void OnSpawn()
 	{
-		_cooldown = GD.RandRange(0.3f, FireInterval);
+		_rng.Randomize();
+		_cooldown = _rng.RandfRange(0.3f, FireIntervalMax);
 		_bulletContainer = GetTree().Root.FindChild("BulletContainer", recursive: true, owned: false);
 	}
 
@@ -36,7 +40,7 @@ public partial class ShooterEnemy : EnemyBase
 		if (_cooldown <= 0.0 && toPlayer != Vector2.Zero)
 		{
 			Fire(toPlayer);
-			_cooldown = FireInterval;
+			_cooldown = _rng.RandfRange(FireIntervalMin, FireIntervalMax);
 		}
 	}
 

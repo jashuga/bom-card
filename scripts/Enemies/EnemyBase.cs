@@ -13,6 +13,9 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	[Export] public float Acceleration = 900f;
 	[Export] public int ScoreValue = 10;
 
+	/// <summary>Turn rate in radians/sec for enemies that call <see cref="FacePlayer"/>. 0 snaps instantly.</summary>
+	[Export] public float TurnSpeed = 12f;
+
 	public Health Health { get; private set; }
 	public bool IsAlive => Health != null && Health.IsAlive;
 
@@ -56,6 +59,25 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	}
 
 	protected virtual void OnSpawn() { }
+
+	/// <summary>
+	/// Turn to look at the player. Opt-in — call it from <see cref="Act"/>; enemies that don't
+	/// stay at their spawn rotation. Rotating the root rather than just the sprite keeps the
+	/// muzzle offset and any child markers aligned — the collider is a circle, so spinning it
+	/// costs nothing. The +PI/2 is because the art points up at zero rotation, same convention
+	/// as the player and the projectiles.
+	/// </summary>
+	protected virtual void FacePlayer(double delta)
+	{
+		Vector2 facing = DirectionToPlayer;
+		if (facing == Vector2.Zero)
+			return;
+
+		float target = facing.Angle() + Mathf.Pi / 2f;
+		Rotation = TurnSpeed > 0f
+			? Mathf.RotateToward(Rotation, target, TurnSpeed * (float)delta)
+			: target;
+	}
 
 	/// <summary>Set <see cref="CharacterBody2D.Velocity"/> here. MoveAndSlide runs afterwards.</summary>
 	protected abstract void Act(double delta);
