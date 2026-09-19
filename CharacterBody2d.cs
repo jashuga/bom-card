@@ -1,10 +1,14 @@
 using Godot;
 using System;
-
+using System.Collections;
 public partial class CharacterBody2d : CharacterBody2D
 {
 	public const float Speed = 300.0f;
 	public const float JumpVelocity = -400.0f;
+
+	private Queue PrimaryQueue = new Queue();
+	private Queue SecondaryQueue = new Queue();
+	private Queue UltimateQueue = new Queue();
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -29,5 +33,46 @@ public partial class CharacterBody2d : CharacterBody2D
 
 		Velocity = velocity;
 		MoveAndSlide();
+	}
+	    public override void _Input(InputEvent @event)
+    {
+        //shoot is space bar ot left click
+        //upon shooting creates a bullet
+        if (@event.IsActionPressed("primary"))
+			SpawnObject(PrimaryQueue.Dequeue() as bullet);
+        {
+           
+        }
+		if (@event.IsActionPressed("secondary"))
+        {
+           SpawnObject(SecondaryQueue.Dequeue() as bullet);
+        }
+		if (@event.IsActionPressed("ultimate"))
+        {
+        	SpawnObject(UltimateQueue.Dequeue() as bullet);
+        }
+
+    }
+
+	private void SpawnObject(bullet b)
+	{
+		AddSibling(b);
+	}
+
+	private void OnNewCardTimerTimeout()
+	{
+		bullet bulletScene = (bullet)GD.Load<PackedScene>("res://bullet.tscn").Instantiate();
+		if(bulletScene.BulletType == BulletTypes.PRIMARY){
+			GD.Print("Primary Bullet");
+			PrimaryQueue.Enqueue(bulletScene);
+		}
+		else if(bulletScene.BulletType == BulletTypes.SECONDARY){
+			SecondaryQueue.Enqueue(bulletScene);
+			GD.Print("Secondary Bullet");
+		}
+		else if(bulletScene.BulletType == BulletTypes.ULTIMATE){
+			UltimateQueue.Enqueue(bulletScene);
+			GD.Print("Ultimate Bullet");
+		}
 	}
 }

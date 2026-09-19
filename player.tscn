@@ -7,8 +7,13 @@ size = Vector2(20, 20)
 
 [node name="Node2D" type="Node2D" unique_id=1129001604]
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=386825850]
+[node name="Player" type="CharacterBody2D" parent="." unique_id=386825850]
 script = ExtResource("1_4flbx")
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=871609606]
+[node name="Player_Sprite" type="Sprite2D" parent="Player" unique_id=871609606]
 texture = SubResource("PlaceholderTexture2D_dkqkh")
+
+[node name="NewCardTimer" type="Timer" parent="." unique_id=880246919]
+autostart = true
+
+[connection signal="timeout" from="NewCardTimer" to="Player" method="OnNewCardTimerTimeout"]

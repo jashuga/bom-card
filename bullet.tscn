@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cbc62ch08axtj"]
+
+[ext_resource type="Script" uid="uid://dcb6s6xxnqc1v" path="res://bullet.cs" id="1_v7oki"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dkqkh"]
+size = Vector2(9, 9)
+
+[node name="Bullet" type="AnimatableBody2D" unique_id=496018043]
+script = ExtResource("1_v7oki")
+
+[node name="BulletSprite" type="Sprite2D" parent="." unique_id=313357146]
+texture = SubResource("PlaceholderTexture2D_dkqkh")
