@@ -39,7 +39,7 @@ public partial class CharacterBody2d : CharacterBody2D
         //shoot is space bar ot left click
         //upon shooting creates a bullet
         if (@event.IsActionPressed("primary"))
-			SpawnObject(PrimaryQueue.Dequeue() as bullet);
+			SpawnObject(GD.Load<PackedScene>($"res://bullet.tscn").Instantiate() as bullet);
         {
            
         }
@@ -62,6 +62,7 @@ public partial class CharacterBody2d : CharacterBody2D
 	private void AddAmmo(Type bullet)
 	{
 		bullet bulletScene = (bullet)GD.Load<PackedScene>($"res://{nameof(bullet)}.tscn").Instantiate();
+		bulletScene.BulletType = BulletTypes.SECONDARY;
 		if(bulletScene.BulletType == BulletTypes.PRIMARY){
 			GD.Print("Primary Bullet");
 			PrimaryQueue.Enqueue(bulletScene);
