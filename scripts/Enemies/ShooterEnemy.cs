@@ -12,16 +12,15 @@ public partial class ShooterEnemy : EnemyBase
 	[Export] public float FireIntervalMin = 2f;
 	[Export] public float FireIntervalMax = 3f;
 	[Export] public float BulletDamage = 8f;
+	[Export] public float BulletSpeed = 420f;
 
 	private readonly RandomNumberGenerator _rng = new();
 	private double _cooldown;
-	private Node _bulletContainer;
 
 	protected override void OnSpawn()
 	{
 		_rng.Randomize();
 		_cooldown = _rng.RandfRange(0.3f, FireIntervalMax);
-		_bulletContainer = GetTree().Root.FindChild("BulletContainer", recursive: true, owned: false);
 	}
 
 	protected override void Act(double delta)
@@ -39,26 +38,8 @@ public partial class ShooterEnemy : EnemyBase
 		_cooldown -= delta;
 		if (_cooldown <= 0.0 && toPlayer != Vector2.Zero)
 		{
-			Fire(toPlayer);
+			FireBasicRound(toPlayer, BulletDamage, BulletSpeed);
 			_cooldown = _rng.RandfRange(FireIntervalMin, FireIntervalMax);
 		}
-	}
-
-	private void Fire(Vector2 direction)
-	{
-		if (_bulletContainer == null)
-			return;
-
-		var bullet = Scenes.BasicRound.Instantiate<BasicRound>();
-		bullet.Direction = direction;
-		bullet.Shooter = this;
-		bullet.Hostile = true;
-		bullet.Damage = BulletDamage;
-		bullet.Speed = 420f;
-
-		Vector2 muzzle = GlobalPosition + direction * 26f;
-		bullet.Position = _bulletContainer is Node2D container ? container.ToLocal(muzzle) : muzzle;
-
-		_bulletContainer.AddChild(bullet);
 	}
 }

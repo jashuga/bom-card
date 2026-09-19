@@ -35,4 +35,5 @@ public static class Scenes
 	public static PackedScene Player => Get("res://scenes/Player.tscn");
 	public static PackedScene MeleeEnemy => Get("res://scenes/enemies/MeleeEnemy.tscn");
 	public static PackedScene ShooterEnemy => Get("res://scenes/enemies/ShooterEnemy.tscn");
+	public static PackedScene TankEnemy => Get("res://scenes/enemies/TankEnemy.tscn");
 }

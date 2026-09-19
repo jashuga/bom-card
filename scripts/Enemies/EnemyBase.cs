@@ -23,6 +23,7 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	protected Node2D Sprite;
 
 	private double _flashFor;
+	private Node _bulletContainer;
 
 	public override void _Ready()
 	{
@@ -89,6 +90,40 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		Player != null && IsInstanceValid(Player)
 			? (Player.GlobalPosition - GlobalPosition).Normalized()
 			: Vector2.Zero;
+
+	/// <summary>Where spawned bullets are parented. Resolved lazily — the container is a sibling
+	/// in the arena, not guaranteed to exist when an enemy runs _Ready.</summary>
+	protected Node BulletContainer =>
+		_bulletContainer != null && IsInstanceValid(_bulletContainer)
+			? _bulletContainer
+			: _bulletContainer = GetTree().Root.FindChild("BulletContainer", recursive: true, owned: false);
+
+	/// <summary>
+	/// Spawn one hostile BasicRound heading in <paramref name="direction"/>. Reuses the player's
+	/// bullet pipeline with Hostile = true rather than giving enemies a separate projectile path.
+	/// <paramref name="muzzleOffset"/> should clear your own collider so the shot reads as leaving
+	/// the body.
+	/// </summary>
+	protected void FireBasicRound(Vector2 direction, float damage, float speed, float muzzleOffset = 26f)
+	{
+		Node container = BulletContainer;
+		if (container == null || direction == Vector2.Zero)
+			return;
+
+		direction = direction.Normalized();
+
+		var bullet = Scenes.BasicRound.Instantiate<BasicRound>();
+		bullet.Direction = direction;
+		bullet.Shooter = this;
+		bullet.Hostile = true;
+		bullet.Damage = damage;
+		bullet.Speed = speed;
+
+		Vector2 muzzle = GlobalPosition + direction * muzzleOffset;
+		bullet.Position = container is Node2D node ? node.ToLocal(muzzle) : muzzle;
+
+		container.AddChild(bullet);
+	}
 
 	protected void Steer(Vector2 desiredDirection, double delta, float speedScale = 1f)
 	{

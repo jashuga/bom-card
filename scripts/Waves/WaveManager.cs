@@ -24,6 +24,11 @@ public partial class WaveManager : Node
 	[Export] public int EnemiesPerWave = 2;
 	[Export] public int MaxEnemyCount = 26;
 
+	/// <summary>Tanks start showing up here, then one more every <see cref="WavesPerExtraTank"/>.</summary>
+	[Export] public int FirstTankWave = 3;
+	[Export] public int WavesPerExtraTank = 3;
+	[Export] public int MaxTankCount = 3;
+
 	/// <summary>Enemy max health is multiplied by 1 + wave * this.</summary>
 	[Export] public float HealthScalePerWave = 0.12f;
 
@@ -72,12 +77,24 @@ public partial class WaveManager : Node
 		_pending.Clear();
 
 		int total = Mathf.Min(MaxEnemyCount, BaseEnemyCount + wave * EnemiesPerWave);
+
+		// Tanks are a slow trickle — they're a wall to work around, not the bulk of a wave.
+		int tanks = wave >= FirstTankWave
+			? Mathf.Min(MaxTankCount, 1 + (wave - FirstTankWave) / Mathf.Max(1, WavesPerExtraTank))
+			: 0;
+		tanks = Mathf.Min(tanks, total);
+
+		// Shooters take their cut of what's left, so tanks displace chaff rather than adding to it.
 		float shooterRatio = Mathf.Clamp(0.15f + wave * 0.06f, 0f, 0.5f);
-		int shooters = Mathf.RoundToInt(total * shooterRatio);
+		int shooters = Mathf.RoundToInt((total - tanks) * shooterRatio);
 
 		var roster = new List<PackedScene>(total);
 		for (int i = 0; i < total; i++)
-			roster.Add(i < shooters ? Scenes.ShooterEnemy : Scenes.MeleeEnemy);
+		{
+			roster.Add(i < tanks ? Scenes.TankEnemy
+				: i < tanks + shooters ? Scenes.ShooterEnemy
+				: Scenes.MeleeEnemy);
+		}
 
 		// Fisher-Yates so shooters aren't all front-loaded.
 		for (int i = roster.Count - 1; i > 0; i--)
