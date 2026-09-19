@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dw3p6b2g8wcxx"]
 
 [ext_resource type="Script" uid="uid://dskaupn8ijta1" path="res://CharacterBody2d.cs" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://b0pwgsjd6m55c" path="res://EnemyWaveHandler.cs" id="2_onrkg"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dkqkh"]
 size = Vector2(20, 20)
@@ -9,11 +10,12 @@ size = Vector2(20, 20)
 
 [node name="Node2D" type="Node2D" unique_id=1129001604]
 
-[node name="NewEnemyTimer" type="Timer" parent="." unique_id=207628121]
+[node name="NextPhaseTimer" type="Timer" parent="." unique_id=207628121]
+wait_time = 5.0
 one_shot = true
-autostart = true
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=386825850]
+position = Vector2(400, 400)
 script = ExtResource("1_4flbx")
 
 [node name="Player_Sprite" type="Sprite2D" parent="Player" unique_id=871609606]
@@ -29,6 +31,14 @@ autostart = true
 wait_time = 0.5
 one_shot = true
 
-[connection signal="timeout" from="NewEnemyTimer" to="Player" method="OnNewEnemyTimerTimeout"]
+[node name="EnemyWaveHandler" type="Control" parent="." unique_id=1448369311]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_onrkg")
+
+[connection signal="timeout" from="NextPhaseTimer" to="EnemyWaveHandler" method="OnNextPhaseTimerTimeout"]
 [connection signal="timeout" from="NewCardTimer" to="Player" method="OnNewCardTimerTimeout"]
 [connection signal="timeout" from="InvincibilityTimer" to="Player" method="OnInvincibilityTimeout"]
+[connection signal="child_exiting_tree" from="EnemyWaveHandler" to="EnemyWaveHandler" method="OnChildExitingTree"]

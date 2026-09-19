@@ -37,7 +37,21 @@ public partial class CharacterBody2d : CharacterBody2D
 			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
 			velocity.Y = Mathf.MoveToward(Velocity.Y, 0, Speed);
 		}
-
+		if(Position.X <= 20 && velocity.X < 0)
+		{
+			velocity.X = 0;
+		} else if(Position.X >= 940 && velocity.X > 0)
+		{
+			velocity.X = 0;
+		}
+		if(Position.Y <= 20 && velocity.Y < 0)
+		{
+			velocity.Y = 0;
+		}
+		if(Position.Y >= 940 && velocity.Y > 0)
+		{
+			velocity.Y = 0;
+		}
 		Velocity = velocity;
 		var collision = MoveAndCollide(Velocity * (float)delta);
 		if (collision != null)
@@ -112,10 +126,4 @@ public partial class CharacterBody2d : CharacterBody2D
 		AddAmmo(typeof(bullet));
 	}
 
-	private void OnNewEnemyTimerTimeout()
-	{
-		var enemy = (Enemy)GD.Load<PackedScene>("res://enemy.tscn").Instantiate();
-		enemy.Position = new Vector2(100, 100);
-		AddSibling(enemy);
-	}
 }

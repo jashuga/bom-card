@@ -7,7 +7,7 @@ public partial class Enemy : StaticBody2D
 	public int speed = 100;
 	public override void _PhysicsProcess(double delta)
 	{
-		var PlayerPos = GetNode<CharacterBody2D>("../Player").Position;
+		var PlayerPos = GetNode<CharacterBody2D>("/root/Node2D/Player").Position;
 		var VectorToPlayer = (PlayerPos - Position).Normalized();
 		var velocity = VectorToPlayer * speed;
 		Position += velocity * (float)delta;

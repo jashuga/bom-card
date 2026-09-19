@@ -31,8 +31,12 @@ public partial class bullet : Area2D
 		//temporary code to move bullet up
 		//for debugging
 		Vector2 velocity = new Vector2();
-		velocity.Y = -100;
+		velocity.Y = -500;
 		Position += velocity * (float)delta;
+		if(Position.Y < 0)
+		{
+			QueueFree();
+		}
 	}
 
 	private void OnBulletEntered(Node e)
@@ -40,6 +44,7 @@ public partial class bullet : Area2D
 		if(e is Enemy)
 		{
 			GD.Print("hit");
+			e.QueueFree(); //DELETES ENEMY
 			//QueueFree(); //DELETES BULLET
 		}
 	}
