@@ -30,10 +30,6 @@ default_color = Color(0.17, 0.21, 0.28, 1)
 collision_layer = 1
 collision_mask = 0
 
-[node name="Top" type="CollisionShape2D" parent="Walls"]
-position = Vector2(640, -20)
-shape = SubResource("RectangleShape2D_h")
-
 [node name="Bottom" type="CollisionShape2D" parent="Walls"]
 position = Vector2(640, 740)
 shape = SubResource("RectangleShape2D_h")
@@ -45,6 +41,14 @@ shape = SubResource("RectangleShape2D_v")
 [node name="Right" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1300, 360)
 shape = SubResource("RectangleShape2D_v")
+
+[node name="TopBarrier" type="StaticBody2D" parent="."]
+collision_layer = 32
+collision_mask = 0
+
+[node name="Top" type="CollisionShape2D" parent="TopBarrier"]
+position = Vector2(640, -20)
+shape = SubResource("RectangleShape2D_h")
 
 [node name="EnemyContainer" type="Node2D" parent="."]
 

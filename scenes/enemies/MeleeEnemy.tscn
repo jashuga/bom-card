@@ -27,4 +27,4 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
-Max = 16.0
+Max = 14.0

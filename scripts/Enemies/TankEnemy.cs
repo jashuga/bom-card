@@ -2,9 +2,9 @@ using Godot;
 
 /// <summary>
 /// Big, slow and hard to shift. It refuses to let you get close — back it into a corner and
-/// it still shuffles away — and answers with an X of four diagonal shots fired around itself.
-/// The volley is fixed in world space rather than aimed, so the gaps sit on the cardinals:
-/// the way through a tank is straight at it, which is also where it least wants you.
+/// it still shuffles away — and answers with six shots fired around itself: the four diagonals
+/// plus straight left and right. The volley is fixed in world space rather than aimed, so the
+/// only gaps are directly above and below it.
 /// </summary>
 public partial class TankEnemy : EnemyBase
 {
@@ -20,10 +20,14 @@ public partial class TankEnemy : EnemyBase
 	/// <summary>Has to clear the tank's own (large) collider or the shots look like they hatch inside it.</summary>
 	[Export] public float MuzzleOffset = 42f;
 
-	/// <summary>The four corners, normalised on use. Fixed in world space — the tank never aims.</summary>
-	private static readonly Vector2[] Diagonals =
+	/// <summary>
+	/// Four corners plus straight left and right — six shots, normalised on use. Fixed in world
+	/// space; the tank never aims. The gaps are now only straight up and straight down.
+	/// </summary>
+	private static readonly Vector2[] ShotDirections =
 	{
 		new(1f, 1f), new(-1f, 1f), new(-1f, -1f), new(1f, -1f),
+		new(1f, 0f), new(-1f, 0f),
 	};
 
 	private double _cooldown;
@@ -55,7 +59,7 @@ public partial class TankEnemy : EnemyBase
 
 	private void FireVolley()
 	{
-		foreach (Vector2 diagonal in Diagonals)
-			FireBasicRound(diagonal, BulletDamage, BulletSpeed, MuzzleOffset);
+		foreach (Vector2 direction in ShotDirections)
+			FireBasicRound(direction, BulletDamage, BulletSpeed, MuzzleOffset);
 	}
 }

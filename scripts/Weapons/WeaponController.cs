@@ -89,7 +89,7 @@ public partial class WeaponController : Node2D
 				offset = Mathf.DegToRad(Mathf.Lerp(-shot.SpreadDegrees * 0.5f, shot.SpreadDegrees * 0.5f, t));
 			}
 
-			Spawn(shot.BulletScene, aim.Rotated(offset));
+			Spawn(shot.BulletScene, aim.Rotated(offset), shot.DamageMultiplier);
 		}
 
 		EmitSignal(SignalName.Fired, ActiveSlot);
@@ -127,7 +127,7 @@ public partial class WeaponController : Node2D
 
 	// ---- internals ---------------------------------------------------------------
 
-	private void Spawn(PackedScene scene, Vector2 direction)
+	private void Spawn(PackedScene scene, Vector2 direction, float damageMultiplier)
 	{
 		if (scene == null || _bulletContainer == null)
 			return;
@@ -136,6 +136,7 @@ public partial class WeaponController : Node2D
 		bullet.Direction = direction;
 		bullet.Shooter = Shooter;
 		bullet.Hostile = Hostile;
+		bullet.Damage *= damageMultiplier;
 
 		Vector2 muzzle = GlobalPosition + direction * MuzzleOffset;
 		bullet.Position = _bulletContainer is Node2D container2D ? container2D.ToLocal(muzzle) : muzzle;
