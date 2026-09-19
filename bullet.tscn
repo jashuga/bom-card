@@ -5,7 +5,7 @@
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dkqkh"]
 size = Vector2(9, 9)
 
-[node name="Bullet" type="AnimatableBody2D" unique_id=496018043]
+[node name="Bullet" type="CharacterBody2D" unique_id=71476484]
 script = ExtResource("1_v7oki")
 
 [node name="BulletSprite" type="Sprite2D" parent="." unique_id=313357146]

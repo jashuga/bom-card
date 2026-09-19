@@ -12,7 +12,7 @@ namespace enums{
 
 }
 
-public partial class bullet : AnimatableBody2D
+public partial class bullet : CharacterBody2D
 {
 	
 	//default bullet type is primary
@@ -22,10 +22,14 @@ public partial class bullet : AnimatableBody2D
 	{
 		//sets bullet position to player position
 		Position = GetNode<CharacterBody2D>("../Player").Position;
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		Vector2 velocity = Velocity;
+		velocity.Y *= 100;
+		Velocity = velocity;
 	}
 }
