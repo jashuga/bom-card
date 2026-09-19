@@ -5,9 +5,12 @@
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dkqkh"]
 size = Vector2(20, 20)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dkqkh"]
+
 [node name="Node2D" type="Node2D" unique_id=1129001604]
 
 [node name="NewEnemyTimer" type="Timer" parent="." unique_id=207628121]
+one_shot = true
 autostart = true
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=386825850]
@@ -15,6 +18,9 @@ script = ExtResource("1_4flbx")
 
 [node name="Player_Sprite" type="Sprite2D" parent="Player" unique_id=871609606]
 texture = SubResource("PlaceholderTexture2D_dkqkh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=852571050]
+shape = SubResource("RectangleShape2D_dkqkh")
 
 [node name="NewCardTimer" type="Timer" parent="." unique_id=880246919]
 autostart = true

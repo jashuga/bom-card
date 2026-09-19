@@ -8,7 +8,7 @@ size = Vector2(9, 9)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dkqkh"]
 size = Vector2(9, 10)
 
-[node name="Bullet" type="Area2D" unique_id=1626693754]
+[node name="Bullet" type="Area2D" unique_id=896237171]
 script = ExtResource("1_v7oki")
 
 [node name="BulletSprite" type="Sprite2D" parent="." unique_id=313357146]

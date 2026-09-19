@@ -35,8 +35,12 @@ public partial class bullet : Area2D
 		Position += velocity * (float)delta;
 	}
 
-	private void OnBulletEntered(Enemy e)
+	private void OnBulletEntered(Node e)
 	{
-		GD.Print("Enemy hit:" + e);
+		if(e is Enemy)
+		{
+			GD.Print("hit");
+			//QueueFree(); //DELETES BULLET
+		}
 	}
 }
