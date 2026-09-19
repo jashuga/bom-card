@@ -59,9 +59,9 @@ public partial class CharacterBody2d : CharacterBody2D
 		AddSibling(b);
 	}
 
-	private void OnNewCardTimerTimeout()
+	private void AddAmmo(Type bullet)
 	{
-		bullet bulletScene = (bullet)GD.Load<PackedScene>("res://bullet.tscn").Instantiate();
+		bullet bulletScene = (bullet)GD.Load<PackedScene>($"res://{nameof(bullet)}.tscn").Instantiate();
 		if(bulletScene.BulletType == BulletTypes.PRIMARY){
 			GD.Print("Primary Bullet");
 			PrimaryQueue.Enqueue(bulletScene);
@@ -74,5 +74,9 @@ public partial class CharacterBody2d : CharacterBody2D
 			UltimateQueue.Enqueue(bulletScene);
 			GD.Print("Ultimate Bullet");
 		}
+	}
+	private void OnNewCardTimerTimeout()
+	{
+		AddAmmo(typeof(bullet));
 	}
 }
