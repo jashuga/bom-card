@@ -6,17 +6,20 @@ public partial class EnemyWaveHandler : Control
 {
 	Queue<List<Node2D>> enemyWave = new Queue<List<Node2D>>();
 	bool WaveDone = false;
+	int waveCount = 0;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		enemyWave.Enqueue(new List<Node2D>{GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D,
 											GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D,
+											GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D,
 											GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D});
 		enemyWave.Enqueue(new List<Node2D>{GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D,
 											GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D,
 											GD.Load<PackedScene>("res://enemy.tscn").Instantiate() as Node2D});									
-	SpawnEnemyWave(enemyWave);
+		SpawnEnemyWave(enemyWave);
 	}
+
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -25,27 +28,38 @@ public partial class EnemyWaveHandler : Control
 
 	public void SpawnEnemyWave(Queue<List<Node2D>> wave)
 	{
-			foreach (Node2D enemy in wave.Dequeue())
-			{
-				AddChild(enemy);
-			}
-			if(wave.Count == 0)
-			{
-				WaveDone = true;
-				GD.Print("Wave Complete");
-			} else{
-				var timer = GetNode<Timer>("../NextPhaseTimer");
-				timer.Start();
-				timer.Timeout += () => SpawnEnemyWave(wave);
-				
-			} 
+		waveCount++;
+		var enemyCount = 0;
+		var numberOfEnemies = wave.Peek().Count;
+		foreach (Node2D enemy in wave.Dequeue())
+		{
+			enemyCount++;
+			var position = new Vector2(760/numberOfEnemies * enemyCount - 20, 100);
+			GD.Print($"Spawning enemy {enemyCount} at position {position}");
+			enemy.Position = position;
+			AddChild(enemy);
+		}
+		if(wave.Count == 0)
+		{
+			WaveDone = true;
+			GD.Print("Wave Complete");
+		} else{
+			var timer = GetNode<Timer>("../NextPhaseTimer");
+			timer.Start();
+			timer.Timeout += () => SpawnEnemyWave(wave);
+			
+		} 
 	}
 	public void OnChildExitingTree(Node n)
 	{
-		GD.Print(GetChildCount());
 		if (GetChildCount() == 1 && WaveDone)
 		{
-			GD.Print("Wave Complete");
+			OnWaveComplete();
 		}
+	}
+
+	public void OnWaveComplete()
+	{
+		GD.Print("Wave Complete");
 	}
 }
