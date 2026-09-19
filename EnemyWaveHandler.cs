@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public partial class EnemyWaveHandler : Control
 {
+	[Signal]
+    public delegate void WaveCompleteEventHandler();
 	Queue<List<Node2D>> enemyWave = new Queue<List<Node2D>>();
 	bool WaveDone = false;
 	int waveCount = 0;
@@ -60,6 +62,7 @@ public partial class EnemyWaveHandler : Control
 
 	public void OnWaveComplete()
 	{
+		EmitSignal(SignalName.WaveComplete);
 		GD.Print("Wave Complete");
 	}
 }

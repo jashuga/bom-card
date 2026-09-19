@@ -39,7 +39,7 @@ public partial class bullet : Area2D
 		}
 	}
 
-	private void OnBulletEntered(Node e)
+	public virtual void OnBulletEntered(Node e)
 	{
 		if(e is Enemy)
 		{
