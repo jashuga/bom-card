@@ -1,31 +1,31 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://cmfx6mxbd18om"]
 
-[ext_resource type="Script" path="res://scripts/Player/PlayerController.cs" id="1_player"]
+[ext_resource type="Script" uid="uid://c8utf466yvy5y" path="res://scripts/Player/PlayerController.cs" id="1_player"]
 [ext_resource type="Texture2D" uid="uid://bwetp617vx8gu" path="res://assets/player/player.png" id="2_sprite"]
-[ext_resource type="Script" path="res://scripts/Core/Health.cs" id="3_health"]
-[ext_resource type="Script" path="res://scripts/Weapons/WeaponController.cs" id="4_weapons"]
+[ext_resource type="Script" uid="uid://c0g5qv3tos1ms" path="res://scripts/Core/Health.cs" id="3_health"]
+[ext_resource type="Script" uid="uid://yoofilwbrlpw" path="res://scripts/Weapons/WeaponController.cs" id="4_weapons"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 17.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=3749906]
 z_index = 2
-motion_mode = 1
 collision_layer = 2
 collision_mask = 5
+motion_mode = 1
 script = ExtResource("1_player")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-scale = Vector2(2, 2)
+[node name="Sprite" type="Sprite2D" parent="." unique_id=2076983546]
+position = Vector2(0, -8)
+scale = Vector2(1.5, 1.5)
 texture = ExtResource("2_sprite")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2047848060]
 shape = SubResource("CircleShape2D_body")
 
-[node name="Health" type="Node" parent="."]
+[node name="Health" type="Node" parent="." unique_id=2032264878]
 script = ExtResource("3_health")
-Max = 100.0
 MaxShield = 200.0
 
-[node name="WeaponController" type="Node2D" parent="."]
+[node name="WeaponController" type="Node2D" parent="." unique_id=72205582]
 script = ExtResource("4_weapons")

@@ -79,7 +79,7 @@ public abstract partial class Projectile : Area2D
 
 	// ---- plumbing --------------------------------------------------------------
 
-	private void OnBodyEntered(Node2D body)
+	public virtual void OnBodyEntered(Node2D body)
 	{
 		if (body == null || body == Shooter)
 			return;

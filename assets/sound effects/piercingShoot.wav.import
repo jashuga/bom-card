@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dj804u77xdkxf"
+path="res://.godot/imported/piercingShoot.wav-0dcd75b8ed8f3416f8c19d8e7f0e2de9.sample"
+
+[deps]
+
+source_file="res://assets/sound effects/piercingShoot.wav"
+dest_files=["res://.godot/imported/piercingShoot.wav-0dcd75b8ed8f3416f8c19d8e7f0e2de9.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

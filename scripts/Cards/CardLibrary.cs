@@ -11,10 +11,6 @@ public static class CardLibrary
 {
 	private static readonly List<Card> All = new()
 	{
-		// ---- Common ammo (mag 30) -------------------------------------------------
-		new AmmoCard("Standard Rounds", "30 rounds. Faster, harder-hitting bullets for the Sidearm.",
-			Rarity.Common, () => new Magazine("Standard", Rarity.Common, Scenes.StandardRound)),
-
 		new AmmoCard("Piercing Rounds", "30 rounds. Passes through up to 4 enemies.",
 			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingRound, fireRateMultiplier: 0.8f)),
 

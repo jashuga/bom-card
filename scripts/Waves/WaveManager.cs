@@ -14,7 +14,7 @@ public partial class WaveManager : Node
 	[Export] public NodePath EnemyContainerPath;
 
 	/// <summary>Arena rect, top-left at origin.</summary>
-	[Export] public Vector2 ArenaSize = new(1280f, 720f);
+	[Export] public Vector2 ArenaSize = new(1080f, 1080f);
 
 	/// <summary>Keeps spawns off the left and right walls.</summary>
 	[Export] public float SpawnInset = 56f;

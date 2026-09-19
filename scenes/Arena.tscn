@@ -1,45 +1,39 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://ci6uttquwov34"]
 
-[ext_resource type="Script" path="res://scripts/Core/GameManager.cs" id="1_game"]
+[ext_resource type="Script" uid="uid://ba1bcdpsltme5" path="res://scripts/Core/GameManager.cs" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
-[ext_resource type="Script" path="res://scripts/Waves/WaveManager.cs" id="3_waves"]
-[ext_resource type="Script" path="res://scripts/UI/Hud.cs" id="4_hud"]
-[ext_resource type="Script" path="res://scripts/UI/DraftScreen.cs" id="5_draft"]
+[ext_resource type="Script" uid="uid://diipac5ukwcb6" path="res://scripts/Waves/WaveManager.cs" id="3_waves"]
+[ext_resource type="Script" uid="uid://cx4bvwkefsglf" path="res://scripts/UI/Hud.cs" id="4_hud"]
+[ext_resource type="Script" uid="uid://c7dhywk7cbups" path="res://scripts/UI/DraftScreen.cs" id="5_draft"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h"]
 size = Vector2(1360, 40)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v"]
-size = Vector2(40, 760)
+size = Vector2(43, 1666.5)
 
-[node name="Arena" type="Node2D"]
+[node name="Arena" type="Node2D" unique_id=1045599636]
 script = ExtResource("1_game")
 
-[node name="Background" type="Polygon2D" parent="."]
+[node name="Background" type="Polygon2D" parent="." unique_id=1332615086]
 z_index = -10
+scale = Vector2(1.1429688, 1.8708333)
 color = Color(0.055, 0.063, 0.086, 1)
-polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720)
+polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 646.8873, 720, 0, 720)
 
-[node name="Border" type="Line2D" parent="."]
-z_index = -9
-points = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720, 0, 0)
-width = 3.0
-default_color = Color(0.17, 0.21, 0.28, 1)
-
-[node name="Walls" type="StaticBody2D" parent="."]
-collision_layer = 1
+[node name="Walls" type="StaticBody2D" parent="." unique_id=1500417387]
 collision_mask = 0
 
-[node name="Bottom" type="CollisionShape2D" parent="Walls"]
-position = Vector2(640, 740)
+[node name="Bottom" type="CollisionShape2D" parent="Walls" unique_id=1607624577]
+position = Vector2(640, 1100)
 shape = SubResource("RectangleShape2D_h")
 
-[node name="Left" type="CollisionShape2D" parent="Walls"]
-position = Vector2(-20, 360)
+[node name="Left" type="CollisionShape2D" parent="Walls" unique_id=1992284866]
+position = Vector2(-20.5, 564.75)
 shape = SubResource("RectangleShape2D_v")
 
-[node name="Right" type="CollisionShape2D" parent="Walls"]
-position = Vector2(1300, 360)
+[node name="Right" type="CollisionShape2D" parent="Walls" unique_id=1102605889]
+position = Vector2(1102, 608.5)
 shape = SubResource("RectangleShape2D_v")
 
 [node name="TopBarrier" type="StaticBody2D" parent="."]
@@ -50,19 +44,18 @@ collision_mask = 0
 position = Vector2(640, -20)
 shape = SubResource("RectangleShape2D_h")
 
-[node name="EnemyContainer" type="Node2D" parent="."]
+[node name="EnemyContainer" type="Node2D" parent="." unique_id=803265953]
 
-[node name="BulletContainer" type="Node2D" parent="."]
+[node name="BulletContainer" type="Node2D" parent="." unique_id=689726582]
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="Player" parent="." unique_id=1324938755 instance=ExtResource("2_player")]
 position = Vector2(640, 360)
 
-[node name="WaveManager" type="Node" parent="."]
+[node name="WaveManager" type="Node" parent="." unique_id=1809975506]
 script = ExtResource("3_waves")
-ArenaSize = Vector2(1280, 720)
 
-[node name="Hud" type="CanvasLayer" parent="."]
+[node name="Hud" type="CanvasLayer" parent="." unique_id=761049727]
 script = ExtResource("4_hud")
 
-[node name="DraftScreen" type="CanvasLayer" parent="."]
+[node name="DraftScreen" type="CanvasLayer" parent="." unique_id=1702853351]
 script = ExtResource("5_draft")
