@@ -1,10 +1,8 @@
 [gd_scene format=3 uid="uid://dw3p6b2g8wcxx"]
 
 [ext_resource type="Script" uid="uid://dskaupn8ijta1" path="res://CharacterBody2d.cs" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://bwetp617vx8gu" path="res://assets/player/player.png" id="2_i3pqv"]
 [ext_resource type="Script" uid="uid://b0pwgsjd6m55c" path="res://EnemyWaveHandler.cs" id="2_onrkg"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dkqkh"]
-size = Vector2(20, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dkqkh"]
 
@@ -19,7 +17,8 @@ position = Vector2(400, 400)
 script = ExtResource("1_4flbx")
 
 [node name="Player_Sprite" type="Sprite2D" parent="Player" unique_id=871609606]
-texture = SubResource("PlaceholderTexture2D_dkqkh")
+texture_filter = 1
+texture = ExtResource("2_i3pqv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=852571050]
 shape = SubResource("RectangleShape2D_dkqkh")
