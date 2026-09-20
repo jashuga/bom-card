@@ -10,8 +10,8 @@ public partial class HomingRound : Projectile
 
 	[Export] public float TurnRate = 6.0f;   // radians/sec
 	[Export] public float SeekRadius = 700f;
-	[Export] public float BlastRadius = 60f;
-	[Export] public float BlastDamage = 15f;
+	[Export] public float BlastRadius = 85f;
+	[Export] public float BlastDamage = 24f;
 	[Export] public float RetargetInterval = 0.25f;
 
 	private Node2D _target;

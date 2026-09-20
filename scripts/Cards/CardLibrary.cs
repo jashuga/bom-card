@@ -36,13 +36,17 @@ public static class CardLibrary
 		new AmmoCard("Ricochet Rounds", "25 rounds. Bounces off walls up to 4 times.",
 			Rarity.Rare, () => new Magazine("Ricochet", Rarity.Rare, Scenes.RicochetRound, fireRateMultiplier: 1.2f)),
 
-		// ---- Epic ammo (mag 10) ---------------------------------------------------
-		new AmmoCard("Homing Missiles", "10 rounds. Seeks the nearest enemy and detonates.",
-			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
+		// ---- Epic ammo -------------------------------------------------------------
+		// Both Epic cards override the rarity's magazine size (10). A round of either is worth
+		// far more than a Rare one, so the Epic count is set per card by how strong the round
+		// actually is rather than by the rarity table. Everything else still takes its size
+		// from RarityRules.MagazineSize.
+		new AmmoCard("Homing Missiles", "7 rounds. Seeks the nearest enemy and detonates.",
+			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound,
+				fireRateMultiplier: 0.8f, rounds: 7)),
 
-		// The only card that overrides its rarity's magazine size. The beam is an instant kill
-		// across a 48px lane and does not stop at enemies, so it is worth well over twice a
-		// homing missile per round — 6 rather than the Epic 10 is what keeps it a decision.
+		// The beam is an instant kill across a 48px lane and does not stop at enemies, so it
+		// is the strongest round in the game per shot — the smallest magazine of anything.
 		new AmmoCard("Laser Cells", "6 rounds. Instant beam that burns through everything in a line.",
 			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound, rounds: 6)),
 
@@ -88,11 +92,13 @@ public static class CardLibrary
 	private static void TakeOne(List<Card> pool, List<Card> picked, int wave,
 		RandomNumberGenerator rng, bool ammoOnly)
 	{
+		Dictionary<Rarity, float> shares = KindTotalsByRarity(pool, ammoOnly);
+
 		float total = 0f;
 		foreach (Card card in pool)
 		{
 			if (!ammoOnly || card is AmmoCard)
-				total += Weight(card, wave);
+				total += Weight(card, wave, shares);
 		}
 
 		if (total <= 0f)
@@ -107,7 +113,7 @@ public static class CardLibrary
 				continue;
 
 			chosen = i; // remember the last eligible index, so rounding can never fall off the end
-			roll -= Weight(pool[i], wave);
+			roll -= Weight(pool[i], wave, shares);
 
 			if (roll <= 0f)
 				break;
@@ -120,6 +126,25 @@ public static class CardLibrary
 		pool.RemoveAt(chosen);
 	}
 
+	/// <summary>
+	/// Total kind weight per rarity across the cards eligible for this draw — the divisor that
+	/// keeps a rarity's share independent of how many cards it contains.
+	/// </summary>
+	private static Dictionary<Rarity, float> KindTotalsByRarity(List<Card> pool, bool ammoOnly)
+	{
+		var totals = new Dictionary<Rarity, float>();
+
+		foreach (Card card in pool)
+		{
+			if (ammoOnly && card is not AmmoCard)
+				continue;
+
+			totals[card.Rarity] = totals.GetValueOrDefault(card.Rarity) + KindWeight(card);
+		}
+
+		return totals;
+	}
+
 	private static void Shuffle(List<Card> cards, RandomNumberGenerator rng)
 	{
 		for (int i = cards.Count - 1; i > 0; i--)
@@ -129,7 +154,25 @@ public static class CardLibrary
 		}
 	}
 
-	private static float Weight(Card card, int wave) => RarityWeight(card.Rarity, wave) * KindWeight(card);
+	/// <summary>
+	/// A card's share of the roll: its rarity's table weight, split between that rarity's
+	/// cards in proportion to their kind weight.
+	///
+	/// The division is the whole point. Weighting each card by its rarity directly made a
+	/// rarity's total share its table weight TIMES its card count — and the library holds 3
+	/// Common, 5 Rare and 3 Epic, so Rare came out more likely than Common at every wave
+	/// (45% vs 43% at wave 1) and Epic nearly caught Common by wave 12. Normalising means the
+	/// rarity table says what it means, and adding a card to a tier splits that tier's share
+	/// instead of silently inflating the whole tier.
+	/// </summary>
+	private static float Weight(Card card, int wave, Dictionary<Rarity, float> shares)
+	{
+		float share = shares.GetValueOrDefault(card.Rarity);
+
+		return share > 0f
+			? RarityWeight(card.Rarity, wave) * KindWeight(card) / share
+			: 0f;
+	}
 
 	private static float KindWeight(Card card) => card switch
 	{
