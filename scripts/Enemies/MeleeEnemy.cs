@@ -50,13 +50,28 @@ public partial class MeleeEnemy : EnemyBase
 	/// <summary>Dot cutoff for "that shot is aimed at me" — 0.5 is a 60° cone.</summary>
 	[Export] public float DodgeCone = 0.5f;
 
-	private double _cooldown;
+	/// <summary>Ring the non-leading chasers hold, well outside arm's reach.</summary>
+	[Export] public float StandoffRange = 135f;
+	[Export] public float StandoffTolerance = 30f;
 
-	protected override void OnSpawn()
-	{
-		_rng.Randomize();
-		_orbitSign = _rng.Randf() < 0.5f ? -1f : 1f; // half circle each way, so the ring doesn't rotate as one
-	}
+	/// <summary>Speed of a chaser that's waiting its turn. Below 1 so the leader stays the threat.</summary>
+	[Export] public float WaitingSpeedScale = 0.75f;
+
+	/// <summary>How much closer a challenger must be before it takes the lead. Hysteresis — without
+	/// it the role flickers between two enemies at similar range and neither commits.</summary>
+	[Export] public float LeadHandoffMargin = 40f;
+
+	/// <summary>
+	/// The single chaser currently allowed to attack. Static on purpose: it's one role shared
+	/// across the whole field, not per-instance state. Cleared when its holder dies or is freed.
+	/// </summary>
+	private static MeleeEnemy _leader;
+
+	private bool IsLeader => _leader == this;
+
+	private readonly RandomNumberGenerator _rng = new();
+	private float _orbitSign = 1f;
+	private double _cooldown;
 
 	public override void ApplyWaveScaling(int wave)
 	{
@@ -70,45 +85,22 @@ public partial class MeleeEnemy : EnemyBase
 	protected override void Act(double delta)
 	{
 		_cooldown -= delta;
-		UpdateLeadership();
 
 		float distance = DistanceToPlayer;
 		Vector2 chase = DirectionToPlayer;
-		bool leading = IsLeader;
 
-		Vector2 heading;
-		float speedScale;
-
-		if (leading)
-		{
-			heading = chase;
-
-			// Speed ramps from 1x at ChargeRange up to ChargeSpeedScale at contact.
-			speedScale = distance < ChargeRange
-				? Mathf.Lerp(1f, ChargeSpeedScale, 1f - distance / ChargeRange)
-				: 1f;
-		}
-		else
-		{
-			// Waiting its turn: settle onto the ring and circle, never crowd in.
-			if (distance < StandoffRange - StandoffTolerance)
-				heading = -chase;
-			else if (distance > StandoffRange + StandoffTolerance)
-				heading = chase;
-			else
-				heading = chase.Orthogonal() * _orbitSign;
-
-			speedScale = WaitingSpeedScale;
-		}
+		// Speed ramps from 1x at ChargeRange up to ChargeSpeedScale at contact.
+		float speedScale = distance < ChargeRange
+			? Mathf.Lerp(1f, ChargeSpeedScale, 1f - distance / ChargeRange)
+			: 1f;
 
 		Vector2 dodge = DodgeVector();
-		if (dodge != Vector2.Zero && heading != Vector2.Zero)
-			heading = (heading + dodge * DodgeWeight).Normalized();
+		Vector2 heading = dodge == Vector2.Zero ? chase : (chase + dodge * DodgeWeight).Normalized();
 
 		Steer(heading, delta, speedScale);
 		FacePlayer(delta); // melee is the only type that turns to look at you
 
-		if (!leading || _cooldown > 0.0 || Player is not IDamageable target || !target.IsAlive)
+		if (_cooldown > 0.0 || Player is not IDamageable target || !target.IsAlive)
 			return;
 
 		// Range check OR a real body-on-body contact, so being pinned against the player
@@ -117,27 +109,7 @@ public partial class MeleeEnemy : EnemyBase
 		{
 			target.TakeDamage(ContactDamage, this);
 			_cooldown = AttackCooldown;
-			_leader = null; // hand the lead on so the pack rotates instead of one enemy grinding you down
 		}
-	}
-
-	/// <summary>
-	/// Claim or pass on the single attacking role. Anyone takes a vacant lead; a held one only
-	/// changes hands to someone <see cref="LeadHandoffMargin"/> closer, so it doesn't oscillate.
-	/// </summary>
-	private void UpdateLeadership()
-	{
-		if (_leader != null && (!IsInstanceValid(_leader) || !_leader.IsAlive))
-			_leader = null;
-
-		if (_leader == null)
-		{
-			_leader = this;
-			return;
-		}
-
-		if (!IsLeader && DistanceToPlayer < _leader.DistanceToPlayer - LeadHandoffMargin)
-			_leader = this;
 	}
 
 	/// <summary>

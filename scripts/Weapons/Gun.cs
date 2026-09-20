@@ -8,15 +8,11 @@ public readonly struct Shot
 	public readonly int Projectiles;
 	public readonly float SpreadDegrees;
 
-	/// <summary>Scales the bullet scene's own damage. Lets one gun hit harder with the same ammo.</summary>
-	public readonly float DamageMultiplier;
-
-	public Shot(PackedScene bulletScene, int projectiles, float spreadDegrees, float damageMultiplier = 1f)
+	public Shot(PackedScene bulletScene, int projectiles, float spreadDegrees)
 	{
 		BulletScene = bulletScene;
 		Projectiles = projectiles;
 		SpreadDegrees = spreadDegrees;
-		DamageMultiplier = damageMultiplier;
 	}
 }
 
@@ -34,9 +30,6 @@ public sealed class Gun
 	/// <summary>Shots per second with basic ammo.</summary>
 	public float BaseFireRate { get; }
 
-	/// <summary>Multiplies whatever damage the loaded bullet scene carries.</summary>
-	public float DamageMultiplier { get; }
-
 	/// <summary>Fallback projectile. Only fired when <see cref="HasInfiniteBasicAmmo"/>.</summary>
 	public PackedScene BasicBulletScene { get; }
 
@@ -53,15 +46,13 @@ public sealed class Gun
 
 	private double _cooldown;
 
-	public Gun(string name, Rarity rarity, float baseFireRate, PackedScene basicBulletScene,
-		bool hasInfiniteBasicAmmo, float damageMultiplier = 1f)
+	public Gun(string name, Rarity rarity, float baseFireRate, PackedScene basicBulletScene, bool hasInfiniteBasicAmmo)
 	{
 		Name = name;
 		Rarity = rarity;
 		BaseFireRate = baseFireRate;
 		BasicBulletScene = basicBulletScene;
 		HasInfiniteBasicAmmo = hasInfiniteBasicAmmo;
-		DamageMultiplier = damageMultiplier;
 	}
 
 	public bool HasSpecialAmmo => Magazine is { IsEmpty: false };
@@ -95,7 +86,7 @@ public sealed class Gun
 		if (HasSpecialAmmo)
 		{
 			rate *= Magazine.FireRateMultiplier;
-			shot = new Shot(Magazine.BulletScene, Magazine.ProjectilesPerShot, Magazine.SpreadDegrees, DamageMultiplier);
+			shot = new Shot(Magazine.BulletScene, Magazine.ProjectilesPerShot, Magazine.SpreadDegrees);
 			Magazine.TryConsume();
 
 			if (Magazine.IsEmpty)
@@ -106,7 +97,7 @@ public sealed class Gun
 		}
 		else if (HasInfiniteBasicAmmo)
 		{
-			shot = new Shot(BasicBulletScene, 1, 0f, DamageMultiplier);
+			shot = new Shot(BasicBulletScene, 1, 0f);
 		}
 		else
 		{

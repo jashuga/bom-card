@@ -17,16 +17,10 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	[Export] public float TurnSpeed = 12f;
 
 	/// <summary>Enemies inside this range shove each other apart so they don't stack into one blob.</summary>
-	[Export] public float SeparationRadius = 64f;
+	[Export] public float SeparationRadius = 46f;
 
 	/// <summary>How hard that shove pulls against where the enemy actually wants to go. 0 disables it.</summary>
-	[Export] public float SeparationWeight = 1.2f;
-
-	/// <summary>
-	/// Cap on the summed push. Above 1 a genuine crowd can outvote the chase and break itself
-	/// up, while a single passing neighbour still only nudges.
-	/// </summary>
-	[Export] public float MaxSeparationPush = 2.5f;
+	[Export] public float SeparationWeight = 0.8f;
 
 	public Health Health { get; private set; }
 	public bool IsAlive => Health != null && Health.IsAlive;
@@ -34,18 +28,8 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	protected Node2D Player;
 	protected Node2D Sprite;
 
-	/// <summary>
-	/// Play area this enemy is kept inside — set by the spawner. Enemies spawn above the top
-	/// edge and are free to walk in; the clamp only engages once they're actually inside, so
-	/// nothing can kite back out through the open top and stall a wave forever.
-	/// </summary>
-	public Vector2 ArenaBounds = new(1280f, 720f);
-
-	[Export] public float ArenaMargin = 20f;
-
 	private double _flashFor;
 	private Node _bulletContainer;
-	private bool _entered;
 
 	public override void _Ready()
 	{
@@ -79,22 +63,6 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 
 		Act(delta);
 		MoveAndSlide();
-		ClampToArena();
-	}
-
-	private void ClampToArena()
-	{
-		if (!_entered)
-		{
-			if (Position.Y < ArenaMargin)
-				return; // still on its way in from off-screen
-
-			_entered = true;
-		}
-
-		Position = new Vector2(
-			Mathf.Clamp(Position.X, ArenaMargin, ArenaBounds.X - ArenaMargin),
-			Mathf.Clamp(Position.Y, ArenaMargin, ArenaBounds.Y - ArenaMargin));
 	}
 
 	protected virtual void OnSpawn() { }
@@ -186,11 +154,8 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		Vector2 separation = SeparationVector();
 		if (separation != Vector2.Zero)
 		{
-			// LimitLength on the "holding still" branch matters: separation is allowed to be
-			// longer than 1, and without the clamp a crowded enemy would flee at several
-			// times its own MoveSpeed.
 			desiredDirection = desiredDirection == Vector2.Zero
-				? (separation * SeparationWeight).LimitLength(1f)
+				? separation * SeparationWeight
 				: (desiredDirection + separation * SeparationWeight).Normalized();
 		}
 
@@ -198,9 +163,8 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	}
 
 	/// <summary>
-	/// Push away from nearby enemies, or Zero when there's room. Closer neighbours count for
-	/// more and the contributions sum, so the more crowded an enemy is the harder it pulls out
-	/// — deliberately not normalised, or a tight knot would push no harder than one neighbour.
+	/// Unit push away from nearby enemies, or Zero when there's room. Closer neighbours count
+	/// for more, so a tight knot breaks up faster than a loose one.
 	/// </summary>
 	protected Vector2 SeparationVector()
 	{
@@ -222,7 +186,7 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 			push += away / distance * (1f - distance / SeparationRadius);
 		}
 
-		return push.LimitLength(MaxSeparationPush);
+		return push == Vector2.Zero ? Vector2.Zero : push.Normalized();
 	}
 
 	public void TakeDamage(float amount, Node2D source)

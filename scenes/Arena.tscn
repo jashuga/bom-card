@@ -25,6 +25,10 @@ polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 646.8873, 720, 0, 720)
 [node name="Walls" type="StaticBody2D" parent="." unique_id=1500417387]
 collision_mask = 0
 
+[node name="Top" type="CollisionShape2D" parent="Walls" unique_id=612399506]
+position = Vector2(640, -20)
+shape = SubResource("RectangleShape2D_h")
+
 [node name="Bottom" type="CollisionShape2D" parent="Walls" unique_id=1607624577]
 position = Vector2(640, 1100)
 shape = SubResource("RectangleShape2D_h")
@@ -36,14 +40,6 @@ shape = SubResource("RectangleShape2D_v")
 [node name="Right" type="CollisionShape2D" parent="Walls" unique_id=1102605889]
 position = Vector2(850, 450)
 shape = SubResource("RectangleShape2D_v")
-
-[node name="TopBarrier" type="StaticBody2D" parent="."]
-collision_layer = 32
-collision_mask = 0
-
-[node name="Top" type="CollisionShape2D" parent="TopBarrier"]
-position = Vector2(640, -20)
-shape = SubResource("RectangleShape2D_h")
 
 [node name="EnemyContainer" type="Node2D" parent="." unique_id=803265953]
 

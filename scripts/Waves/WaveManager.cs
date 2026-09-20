@@ -17,10 +17,6 @@ public partial class WaveManager : Node
 	[Export] public Vector2 ArenaSize = new(720, 360f);
 	[Export] public float SpawnInset = 56f;
 
-	/// <summary>How far above the top edge enemies appear, so they walk into frame rather than
-	/// popping into it. Must clear the top barrier band.</summary>
-	[Export] public float SpawnOutsideMargin = 70f;
-
 	/// <summary>Seconds between individual spawns, so a wave trickles in instead of popping.</summary>
 	[Export] public float SpawnInterval = 0.3f;
 
@@ -34,12 +30,10 @@ public partial class WaveManager : Node
 	/// <summary>Opening waves are nothing but shooters, so the basic threat is legible first.</summary>
 	[Export] public int ShooterOnlyWaves = 1;
 
-	/// <summary>Tanks debut here as a single one, then come as a pair on every wave after.</summary>
+	/// <summary>Tanks debut here at one, then one more every <see cref="WavesPerExtraTank"/>.</summary>
 	[Export] public int FirstTankWave = 4;
-	[Export] public int TanksPerWave = 2;
-
-	/// <summary>How far in from the side walls the paired tanks enter, as a fraction of width.</summary>
-	[Export] public float TankSpawnEdgeFraction = 0.18f;
+	[Export] public int WavesPerExtraTank = 3;
+	[Export] public int MaxTankCount = 3;
 
 	/// <summary>Snipers debut here at one, then one more every <see cref="WavesPerExtraSniper"/>.</summary>
 	[Export] public int FirstSniperWave = 6;
@@ -61,7 +55,6 @@ public partial class WaveManager : Node
 	private Node _enemyContainer;
 	private int _alive;
 	private double _sinceSpawn;
-	private int _tanksSpawned;
 
 	public override void _Ready()
 	{
@@ -96,7 +89,6 @@ public partial class WaveManager : Node
 		_alive = 0;
 		_sinceSpawn = SpawnInterval; // first enemy lands immediately
 		_pending.Clear();
-		_tanksSpawned = 0;
 
 		int total = Mathf.Min(MaxEnemyCount, BaseEnemyCount + wave * EnemiesPerWave);
 
@@ -109,8 +101,10 @@ public partial class WaveManager : Node
 			return;
 		}
 
-		// One on the debut wave to introduce it, a pair on opposite sides from then on.
-		int tanks = wave < FirstTankWave ? 0 : wave == FirstTankWave ? 1 : TanksPerWave;
+		// Tanks are a slow trickle — they're a wall to work around, not the bulk of a wave.
+		int tanks = wave >= FirstTankWave
+			? Mathf.Min(MaxTankCount, 1 + (wave - FirstTankWave) / Mathf.Max(1, WavesPerExtraTank))
+			: 0;
 		tanks = Mathf.Min(tanks, total);
 
 		// Debut is a single sniper, then a gradual build — same shape as the tank ramp.
@@ -169,8 +163,7 @@ public partial class WaveManager : Node
 			return;
 
 		var enemy = scene.Instantiate<EnemyBase>();
-		enemy.ArenaBounds = ArenaSize;
-		enemy.Position = enemy is TankEnemy ? NextTankSpawnPosition() : TopSpawnPosition();
+		enemy.Position = RandomEdgePosition();
 		enemy.Died += OnEnemyDied;
 
 		_enemyContainer.AddChild(enemy);
@@ -192,21 +185,18 @@ public partial class WaveManager : Node
 			roster.Add(scene);
 	}
 
-	/// <summary>Anywhere along the top, above the frame, so enemies march down into view.</summary>
-	private Vector2 TopSpawnPosition() =>
-		new(_rng.RandfRange(SpawnInset, ArenaSize.X - SpawnInset), -SpawnOutsideMargin);
-
-	/// <summary>
-	/// Tanks alternate sides, so the pair in a wave always arrives on opposite flanks rather
-	/// than both wandering in from the same place.
-	/// </summary>
-	private Vector2 NextTankSpawnPosition()
+	private Vector2 RandomEdgePosition()
 	{
-		bool left = _tanksSpawned++ % 2 == 0;
-		float fraction = Mathf.Clamp(TankSpawnEdgeFraction, 0.05f, 0.45f);
-		float x = ArenaSize.X * (left ? fraction : 1f - fraction);
+		float x = _rng.RandfRange(SpawnInset, ArenaSize.X - SpawnInset);
+		float y = _rng.RandfRange(SpawnInset, ArenaSize.Y - SpawnInset);
 
-		return new Vector2(x, -SpawnOutsideMargin);
+		return _rng.RandiRange(0, 3) switch
+		{
+			0 => new Vector2(x, SpawnInset),                 // top
+			1 => new Vector2(x, ArenaSize.Y - SpawnInset),   // bottom
+			2 => new Vector2(SpawnInset, y),                 // left
+			_ => new Vector2(ArenaSize.X - SpawnInset, y),   // right
+		};
 	}
 
 	private void OnEnemyDied(EnemyBase enemy)
