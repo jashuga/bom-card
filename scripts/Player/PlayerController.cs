@@ -140,7 +140,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 		if (DashesLeft <= 0 || IsDashing)
 			return;
 
-		Vector2 direction = input != Vector2.Zero ? input.Normalized() : AimDirection;
+		Vector2 direction = Vector2.Right.Rotated(AimDirection.Angle());
 		if (direction == Vector2.Zero)
 			return;
 
