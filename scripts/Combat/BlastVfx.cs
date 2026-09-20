@@ -18,7 +18,13 @@ public partial class BlastVfx : Node2D
 		if (parent == null)
 			return;
 
-		var vfx = new BlastVfx { _targetRadius = radius, Position = globalPosition };
+		// Position is LOCAL to the parent. BulletContainer sits at the playfield origin, not
+		// the world origin, so a global point MUST be converted — without this every ring drew
+		// one playfield-offset away from the explosion that caused it. Converted here rather
+		// than after the deferred add, so it uses the transform at the time of the blast.
+		Vector2 local = parent is Node2D node ? node.ToLocal(globalPosition) : globalPosition;
+
+		var vfx = new BlastVfx { _targetRadius = radius, Position = local };
 		parent.CallDeferred(Node.MethodName.AddChild, vfx);
 	}
 
