@@ -10,10 +10,11 @@ config_version=5
 
 [application]
 
-config/name="deck builder arcade shooter"
+config/name="bom-card"
 run/main_scene="res://scenes/Arena.tscn"
+config/version="1.0.0"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://assets/icon.png"
 
 [display]
 
