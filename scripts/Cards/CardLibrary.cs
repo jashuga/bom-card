@@ -40,8 +40,11 @@ public static class CardLibrary
 		new AmmoCard("Homing Missiles", "10 rounds. Seeks the nearest enemy and detonates.",
 			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
 
-		new AmmoCard("Laser Cells", "10 rounds. Instant beam that burns through everything in a line.",
-			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound)),
+		// The only card that overrides its rarity's magazine size. The beam is an instant kill
+		// across a 48px lane and does not stop at enemies, so it is worth well over twice a
+		// homing missile per round — 6 rather than the Epic 10 is what keeps it a decision.
+		new AmmoCard("Laser Cells", "6 rounds. Instant beam that burns through everything in a line.",
+			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound, rounds: 6)),
 
 		// ---- Sustain --------------------------------------------------------------
 		new HealCard("Field Repair", "Restore 35 health.", Rarity.Common, heal: 35f),
