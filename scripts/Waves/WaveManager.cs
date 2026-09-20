@@ -13,8 +13,8 @@ public partial class WaveManager : Node
 
 	[Export] public NodePath EnemyContainerPath;
 
-	/// <summary>Arena rect, top-left at origin.</summary>
-	[Export] public Vector2 ArenaSize = new(1080f, 1080f);
+	/// <summary>Play rect, local to the Playfield node. GameManager overwrites it from ArenaLayout.</summary>
+	[Export] public Vector2 ArenaSize = new(ArenaLayout.PlayWidth, ArenaLayout.PlayHeight);
 
 	/// <summary>Keeps spawns off the left and right walls.</summary>
 	[Export] public float SpawnInset = 56f;

@@ -69,6 +69,9 @@ public partial class WeaponController : Node2D
 	{
 		Gun gun = Active;
 
+		// Remember who is firing BEFORE the shot resolves — see the emit at the end.
+		int firingSlot = ActiveSlot;
+
 		if (!gun.IsUsable)
 		{
 			FallBackToCommon();
@@ -92,8 +95,17 @@ public partial class WeaponController : Node2D
 			Spawn(shot.BulletScene, aim.Rotated(offset), shot.DamageMultiplier);
 		}
 
-		EmitSignal(SignalName.Fired, ActiveSlot);
-		EmitAmmo(ActiveSlot);
+		// Report against the slot that ACTUALLY fired, not ActiveSlot. Spending the last round
+		// runs MagazineEmptied -> FallBackToCommon -> SelectSlot from inside gun.TryFire, so by
+		// the time we get here ActiveSlot may already be slot 0. Emitting the new slot left the
+		// gun that just went dry frozen on its previous reading: the "mag is empty but the HUD
+		// still says 1 left" bug.
+		EmitSignal(SignalName.Fired, firingSlot);
+		EmitAmmo(firingSlot);
+
+		// If the shot forced an auto-swap, refresh the gun we landed on too.
+		if (ActiveSlot != firingSlot)
+			EmitAmmo(ActiveSlot);
 	}
 
 	/// <summary>

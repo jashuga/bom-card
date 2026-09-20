@@ -39,7 +39,7 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	/// edge and are free to walk in; the clamp only engages once they're actually inside, so
 	/// nothing can kite back out through the open top and stall a wave forever.
 	/// </summary>
-	public Vector2 ArenaBounds = new(1280f, 720f);
+	public Vector2 ArenaBounds = new(ArenaLayout.PlayWidth, ArenaLayout.PlayHeight);
 
 	[Export] public float ArenaMargin = 20f;
 

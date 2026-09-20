@@ -1,51 +1,82 @@
 using Godot;
 
 /// <summary>
-/// Health/shield, wave state, and the three gun slots with their loaded ammo.
-/// Built entirely in code — attach to a bare CanvasLayer, call Bind* once.
+/// Readouts in the two gutters either side of the portrait play area:
+///
+///   LEFT  — wave number, enemies remaining, the three gun slots
+///   RIGHT — health, shield and speed bars, plus the dash charge
+///
+/// Deliberately UNSTYLED: plain Labels and ProgressBars with Godot's default theme, so the
+/// look is a blank slate. Nothing here sets a font, colour or stylebox — positioning and
+/// wiring only. Column geometry comes from <see cref="ArenaLayout"/>.
 /// </summary>
 public partial class Hud : CanvasLayer
 {
-	private ProgressBar _healthBar;
-	private ProgressBar _shieldBar;
-	private Label _healthLabel;
-	private Label _dashLabel;
+	/// <summary>Inset from the screen edge and from the play area.</summary>
+	private const float Margin = 24f;
+
+	private static float ColumnWidth => ArenaLayout.SideColumnWidth - Margin * 2f;
+
 	private Label _waveLabel;
 	private Label _enemyLabel;
+
+	private ProgressBar _healthBar;
+	private ProgressBar _shieldBar;
+	private ProgressBar _speedBar;
+	private Label _healthLabel;
+	private Label _shieldLabel;
+	private Label _speedLabel;
+	private Label _dashLabel;
+
 	private Label _bannerLabel;
 
-	private readonly PanelContainer[] _slotPanels = new PanelContainer[GunLibrary.SlotCount];
-	private readonly Label[] _slotNames = new Label[GunLibrary.SlotCount];
-	private readonly Label[] _slotAmmo = new Label[GunLibrary.SlotCount];
+	private readonly Label[] _slotLabels = new Label[GunLibrary.SlotCount];
+	private readonly string[] _slotText = new string[GunLibrary.SlotCount];
 
 	private WeaponController _weapons;
+	private PlayerController _player;
 
 	public override void _Ready()
 	{
 		Layer = 10;
-		BuildVitals();
-		BuildWaveReadout();
-		BuildSlots();
+		BuildLeftColumn();
+		BuildRightColumn();
 		BuildBanner();
+	}
+
+	/// <summary>
+	/// The speed bar tracks live velocity, so it has to be polled — there is no "velocity
+	/// changed" signal, and adding one would fire every physics frame anyway.
+	/// </summary>
+	public override void _Process(double delta)
+	{
+		if (_player == null || !IsInstanceValid(_player))
+			return;
+
+		float speed = _player.Velocity.Length();
+		_speedBar.Value = speed;
+		_speedLabel.Text = $"SPEED  {Mathf.RoundToInt(speed)}";
 	}
 
 	// ---- binding ---------------------------------------------------------------
 
 	public void BindPlayer(PlayerController player)
 	{
+		_player = player;
+
 		player.Health.Changed += OnHealthChanged;
 		OnHealthChanged(player.Health.Current, player.Health.Max, player.Health.Shield);
 
 		player.DashChanged += OnDashChanged;
 		OnDashChanged(player.DashesLeft, player.DashesPerWave);
 
+		// Dashing is the fastest the player can ever go, so it is the honest bar ceiling.
+		_speedBar.MaxValue = Mathf.Max(player.Speed, player.DashSpeed);
+		_shieldBar.MaxValue = Mathf.Max(1f, player.Health.MaxShield);
+
 		_weapons = player.Weapons;
 		_weapons.AmmoChanged += OnAmmoChanged;
 		_weapons.WeaponChanged += OnWeaponChanged;
-
-		for (int slot = 0; slot < _slotNames.Length; slot++)
-			_slotNames[slot].Text = $"{slot + 1}  {_weapons.Guns[slot].Name}";
-
 		_weapons.EmitAllAmmo();
 	}
 
@@ -74,35 +105,37 @@ public partial class Hud : CanvasLayer
 	{
 		_healthBar.MaxValue = max;
 		_healthBar.Value = current;
-		_shieldBar.MaxValue = Mathf.Max(1f, Mathf.Max(shield, max));
+		_healthLabel.Text = $"HEALTH  {Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
+
 		_shieldBar.Value = shield;
-		_shieldBar.Visible = shield > 0f;
-		_healthLabel.Text = shield > 0f
-			? $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}   +{Mathf.CeilToInt(shield)}"
-			: $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
+		_shieldLabel.Text = $"SHIELD  {Mathf.CeilToInt(shield)}";
 	}
 
-	private void OnDashChanged(int left, int max)
-	{
+	private void OnDashChanged(int left, int max) =>
 		_dashLabel.Text = left > 0 ? $"DASH  READY  ({left}/{max})" : "DASH  SPENT";
-		_dashLabel.AddThemeColorOverride("font_color", left > 0 ? UiTheme.ShieldFill : UiTheme.Muted);
-	}
 
 	private void OnAmmoChanged(int slot, int rounds, int capacity, string ammoName)
 	{
-		_slotAmmo[slot].Text = capacity > 0 ? $"{ammoName}  {rounds}/{capacity}" : ammoName;
-		_slotAmmo[slot].AddThemeColorOverride("font_color", capacity > 0 ? _weapons.Guns[slot].Rarity.Tint() : UiTheme.Muted);
+		string gun = _weapons.Guns[slot].Name;
+		string ammo = capacity > 0 ? $"{ammoName}  {rounds}/{capacity}" : ammoName;
+
+		_slotText[slot] = $"{slot + 1}  {gun}  —  {ammo}";
+		RefreshSlots();
 	}
 
-	private void OnWeaponChanged(int slot)
+	private void OnWeaponChanged(int slot) => RefreshSlots();
+
+	/// <summary>
+	/// Redraws all three gun lines. The ammo text and the selection marker are composed
+	/// together rather than written separately, because an ammo update rewrites the whole
+	/// label — writing the marker in its own pass meant firing erased it.
+	///
+	/// The marker is a leading ">" rather than a colour so it survives a restyle.
+	/// </summary>
+	private void RefreshSlots()
 	{
-		for (int i = 0; i < _slotPanels.Length; i++)
-		{
-			bool active = i == slot;
-			Color border = active ? _weapons.Guns[i].Rarity.Tint() : new Color(1f, 1f, 1f, 0.10f);
-			_slotPanels[i].AddThemeStyleboxOverride("panel",
-				UiTheme.Box(active ? UiTheme.PanelActive : UiTheme.Panel, border));
-		}
+		for (int i = 0; i < _slotLabels.Length; i++)
+			_slotLabels[i].Text = (i == _weapons.ActiveSlot ? "> " : "  ") + (_slotText[i] ?? $"{i + 1}");
 	}
 
 	private void OnWaveStarted(int wave, int enemyCount)
@@ -117,94 +150,93 @@ public partial class Hud : CanvasLayer
 	// ---- construction ----------------------------------------------------------
 
 	/// <summary>
-	/// Pins a container to one corner and lets it size itself to its contents.
-	/// Anchors alone give a zero rect; the grow direction decides which way the
-	/// minimum size expands, which is what actually keeps it on screen.
+	/// Places a gutter column at an absolute screen position and fixes its width.
+	///
+	/// Deliberately NOT anchors-plus-grow-direction: anchoring to TopRight and growing Begin
+	/// leaves the box pinned at the right edge and growing off-screen, which clips the whole
+	/// column. The layout is a known fixed size, so the position is simply computed.
 	/// </summary>
-	private T Pin<T>(T control, Control.LayoutPreset preset, Vector2 offset,
-		Control.GrowDirection growH, Control.GrowDirection growV) where T : Control
+	private VBoxContainer PinColumn(float x)
 	{
-		control.SetAnchorsPreset(preset);
-		control.GrowHorizontal = growH;
-		control.GrowVertical = growV;
-		control.Position = offset;
-		control.MouseFilter = Control.MouseFilterEnum.Ignore;
-		AddChild(control);
-		return control;
+		var column = new VBoxContainer
+		{
+			CustomMinimumSize = new Vector2(ColumnWidth, 0f),
+			Size = new Vector2(ColumnWidth, 0f),
+			Position = new Vector2(x, Margin),
+			MouseFilter = Control.MouseFilterEnum.Ignore,
+		};
+
+		AddChild(column);
+		return column;
 	}
 
-	private void BuildVitals()
+	private void BuildLeftColumn()
 	{
-		var column = Pin(new VBoxContainer(), Control.LayoutPreset.TopLeft, new Vector2(20f, 16f),
-			Control.GrowDirection.End, Control.GrowDirection.End);
-		column.AddThemeConstantOverride("separation", 4);
+		VBoxContainer column = PinColumn(Margin);
 
-		_healthLabel = UiTheme.MakeLabel("100 / 100", 16);
-		column.AddChild(_healthLabel);
-
-		_healthBar = UiTheme.MakeBar(UiTheme.HealthFill, 260f, 14f);
-		column.AddChild(_healthBar);
-
-		_shieldBar = UiTheme.MakeBar(UiTheme.ShieldFill, 260f, 7f);
-		_shieldBar.Visible = false;
-		column.AddChild(_shieldBar);
-
-		_dashLabel = UiTheme.MakeLabel("DASH  READY", 14, UiTheme.Muted);
-		column.AddChild(_dashLabel);
-	}
-
-	private void BuildWaveReadout()
-	{
-		var column = Pin(new VBoxContainer(), Control.LayoutPreset.TopRight, new Vector2(-20f, 16f),
-			Control.GrowDirection.Begin, Control.GrowDirection.End);
-		column.AddThemeConstantOverride("separation", 2);
-
-		_waveLabel = UiTheme.MakeLabel("WAVE  1", 20);
-		_waveLabel.HorizontalAlignment = HorizontalAlignment.Right;
+		_waveLabel = new Label { Text = "WAVE  1" };
 		column.AddChild(_waveLabel);
 
-		_enemyLabel = UiTheme.MakeLabel("ENEMIES  0", 14, UiTheme.Muted);
-		_enemyLabel.HorizontalAlignment = HorizontalAlignment.Right;
+		_enemyLabel = new Label { Text = "ENEMIES  0" };
 		column.AddChild(_enemyLabel);
-	}
 
-	private void BuildSlots()
-	{
-		var row = Pin(new HBoxContainer(), Control.LayoutPreset.BottomLeft, new Vector2(20f, -20f),
-			Control.GrowDirection.End, Control.GrowDirection.Begin);
-		row.AddThemeConstantOverride("separation", 10);
+		column.AddChild(new Label { Text = string.Empty });
 
-		for (int slot = 0; slot < _slotPanels.Length; slot++)
+		for (int slot = 0; slot < _slotLabels.Length; slot++)
 		{
-			var panel = new PanelContainer
-			{
-				CustomMinimumSize = new Vector2(190f, 0f),
-				MouseFilter = Control.MouseFilterEnum.Ignore,
-			};
-			panel.AddThemeStyleboxOverride("panel", UiTheme.Box(UiTheme.Panel, new Color(1f, 1f, 1f, 0.10f)));
-			row.AddChild(panel);
-
-			var column = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
-			column.AddThemeConstantOverride("separation", 2);
-			panel.AddChild(column);
-
-			_slotNames[slot] = UiTheme.MakeLabel($"{slot + 1}", 14);
-			column.AddChild(_slotNames[slot]);
-
-			_slotAmmo[slot] = UiTheme.MakeLabel("Empty", 12, UiTheme.Muted);
-			column.AddChild(_slotAmmo[slot]);
-
-			_slotPanels[slot] = panel;
+			_slotLabels[slot] = new Label { Text = $"{slot + 1}" };
+			column.AddChild(_slotLabels[slot]);
 		}
 	}
 
+	private void BuildRightColumn()
+	{
+		VBoxContainer column = PinColumn(ArenaLayout.RightColumnX + Margin);
+
+		_healthLabel = new Label { Text = "HEALTH" };
+		column.AddChild(_healthLabel);
+		_healthBar = AddBar(column);
+
+		_shieldLabel = new Label { Text = "SHIELD" };
+		column.AddChild(_shieldLabel);
+		_shieldBar = AddBar(column);
+
+		_speedLabel = new Label { Text = "SPEED" };
+		column.AddChild(_speedLabel);
+		_speedBar = AddBar(column);
+
+		_dashLabel = new Label { Text = "DASH" };
+		column.AddChild(_dashLabel);
+	}
+
+	private static ProgressBar AddBar(VBoxContainer column)
+	{
+		var bar = new ProgressBar
+		{
+			ShowPercentage = false,
+			MinValue = 0,
+			MaxValue = 100,
+			Value = 0,
+			CustomMinimumSize = new Vector2(0f, 16f),
+			MouseFilter = Control.MouseFilterEnum.Ignore,
+		};
+
+		column.AddChild(bar);
+		return bar;
+	}
+
+	/// <summary>Wave banners sit over the play area, which is centred between the gutters.</summary>
 	private void BuildBanner()
 	{
-		var center = Pin(new CenterContainer(), Control.LayoutPreset.CenterTop, new Vector2(0f, 110f),
-			Control.GrowDirection.Both, Control.GrowDirection.End);
+		var center = new CenterContainer
+		{
+			MouseFilter = Control.MouseFilterEnum.Ignore,
+			CustomMinimumSize = new Vector2(ArenaLayout.PlayWidth, 0f),
+			Position = ArenaLayout.PlayOrigin + new Vector2(0f, ArenaLayout.PlayHeight * 0.16f),
+		};
+		AddChild(center);
 
-		_bannerLabel = UiTheme.MakeLabel(string.Empty, 44);
-		_bannerLabel.Visible = false;
+		_bannerLabel = new Label { Text = string.Empty, Visible = false };
 		center.AddChild(_bannerLabel);
 	}
 }
