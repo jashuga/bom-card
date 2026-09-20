@@ -13,15 +13,8 @@ public partial class WaveManager : Node
 
 	[Export] public NodePath EnemyContainerPath;
 
-<<<<<<< HEAD
 	/// <summary>Arena rect, top-left at origin. Enemies spawn just inside this.</summary>
 	[Export] public Vector2 ArenaSize = new(720, 360f);
-=======
-	/// <summary>Arena rect, top-left at origin.</summary>
-	[Export] public Vector2 ArenaSize = new(1080f, 1080f);
-
-	/// <summary>Keeps spawns off the left and right walls.</summary>
->>>>>>> 63ad041f9ed0c412a0a8bcc4a17b0b57d43b51a7
 	[Export] public float SpawnInset = 56f;
 
 	/// <summary>How far above the top edge enemies appear, so they walk into frame rather than
