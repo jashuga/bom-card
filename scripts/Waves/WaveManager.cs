@@ -14,7 +14,7 @@ public partial class WaveManager : Node
 	[Export] public NodePath EnemyContainerPath;
 
 	/// <summary>Arena rect, top-left at origin. Enemies spawn just inside this.</summary>
-	[Export] public Vector2 ArenaSize = new(540, 360f);
+	[Export] public Vector2 ArenaSize = new(720, 360f);
 	[Export] public float SpawnInset = 56f;
 
 	/// <summary>Seconds between individual spawns, so a wave trickles in instead of popping.</summary>

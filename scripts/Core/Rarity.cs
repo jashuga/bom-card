@@ -6,19 +6,21 @@ using Godot;
 /// </summary>
 public enum Rarity
 {
-	Common,
+	Common, 
 	Rare,
 	Epic,
+	SuperEpic,
 }
 
 public static class RarityRules
 {
 	/// <summary>Rounds granted by an ammo card of this rarity.</summary>
-	public static int MagazineSize(this Rarity rarity) => rarity switch
+	public static float MagazineSize(this Rarity rarity) => rarity switch
 	{
-		Rarity.Common => 30,
-		Rarity.Rare => 12,
-		Rarity.Epic => 4,
+		Rarity.Common => 50,
+		Rarity.Rare => 25,
+		Rarity.Epic => 10,
+		Rarity.SuperEpic => 1f,
 		_ => 0,
 	};
 

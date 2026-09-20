@@ -40,7 +40,7 @@ public sealed class Magazine
 		FireRateMultiplier = fireRateMultiplier;
 		ProjectilesPerShot = Mathf.Max(1, projectilesPerShot);
 		SpreadDegrees = spreadDegrees;
-		Capacity = rounds ?? rarity.MagazineSize();
+		Capacity = rounds ?? (int)rarity.MagazineSize();
 		Rounds = Capacity;
 	}
 

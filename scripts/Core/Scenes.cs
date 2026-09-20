@@ -30,6 +30,7 @@ public static class Scenes
 	public static PackedScene RicochetRound => Get("res://scenes/ammo/RicochetRound.tscn");
 	public static PackedScene HomingRound => Get("res://scenes/ammo/HomingRound.tscn");
 	public static PackedScene LaserRound => Get("res://scenes/ammo/LaserRound.tscn");
+	public static PackedScene NukeRound => Get("res://scenes/ammo/NukeRound.tscn");
 
 	// Actors.
 	public static PackedScene Player => Get("res://scenes/Player.tscn");
@@ -37,4 +38,5 @@ public static class Scenes
 	public static PackedScene ShooterEnemy => Get("res://scenes/enemies/ShooterEnemy.tscn");
 	public static PackedScene TankEnemy => Get("res://scenes/enemies/TankEnemy.tscn");
 	public static PackedScene SniperEnemy => Get("res://scenes/enemies/SniperEnemy.tscn");
+	
 }

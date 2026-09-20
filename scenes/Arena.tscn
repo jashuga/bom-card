@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ci6uttquwov34"]
 
 [ext_resource type="Script" uid="uid://ba1bcdpsltme5" path="res://scripts/Core/GameManager.cs" id="1_game"]
-[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cmfx6mxbd18om" path="res://scenes/Player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://diipac5ukwcb6" path="res://scripts/Waves/WaveManager.cs" id="3_waves"]
 [ext_resource type="Script" uid="uid://cx4bvwkefsglf" path="res://scripts/UI/Hud.cs" id="4_hud"]
 [ext_resource type="Script" uid="uid://c7dhywk7cbups" path="res://scripts/UI/DraftScreen.cs" id="5_draft"]
@@ -37,7 +37,7 @@ position = Vector2(-20.5, 564.75)
 shape = SubResource("RectangleShape2D_v")
 
 [node name="Right" type="CollisionShape2D" parent="Walls" unique_id=1102605889]
-position = Vector2(1102, 608.5)
+position = Vector2(850, 450)
 shape = SubResource("RectangleShape2D_v")
 
 [node name="EnemyContainer" type="Node2D" parent="." unique_id=803265953]
@@ -45,7 +45,7 @@ shape = SubResource("RectangleShape2D_v")
 [node name="BulletContainer" type="Node2D" parent="." unique_id=689726582]
 
 [node name="Player" parent="." unique_id=1324938755 instance=ExtResource("2_player")]
-position = Vector2(640, 360)
+position = Vector2(252, 699)
 
 [node name="WaveManager" type="Node" parent="." unique_id=1809975506]
 script = ExtResource("3_waves")
