@@ -53,6 +53,8 @@ public partial class GameManager : Node2D
 		_player.Position = ArenaLayout.PlayerStart;
 		_waves.ArenaSize = ArenaLayout.PlaySize;
 
+		MakeGameplayPausable();
+
 		_hud.BindPlayer(_player);
 		_hud.BindWaves(_waves);
 
@@ -87,6 +89,31 @@ public partial class GameManager : Node2D
 			GetTree().Paused = true;
 			_tutorial.Open(firstTime: false);
 		}
+	}
+
+	/// <summary>
+	/// Pins gameplay to Pausable so GetTree().Paused actually stops the game.
+	///
+	/// This node runs Always, so restart still works while paused — but ProcessMode is
+	/// INHERITED, so every descendant was silently running Always too. The tutorial and the
+	/// draft screen set Paused = true and nothing stopped: the player kept flying, enemies
+	/// kept chasing and shooting, bullets kept landing, all behind the menu.
+	///
+	/// Pinning the two gameplay roots is enough. Enemies and bullets are spawned under
+	/// Playfield at runtime with ProcessMode Inherit, so they pick this up for free — which
+	/// is why this is done here rather than ticked on individual nodes in the scene file,
+	/// where a newly spawned enemy would miss it.
+	///
+	/// The screens that must survive a pause set ProcessModeEnum.Always themselves
+	/// (DraftScreen, TutorialScreen, Sfx) and are unaffected.
+	/// </summary>
+	private void MakeGameplayPausable()
+	{
+		var playfield = GetNodeOrNull<Node2D>(PlayfieldPath);
+		if (playfield != null)
+			playfield.ProcessMode = ProcessModeEnum.Pausable;
+
+		_waves.ProcessMode = ProcessModeEnum.Pausable;
 	}
 
 	private void OnTutorialDismissed()
