@@ -11,6 +11,12 @@ public static class CardLibrary
 {
 	private static readonly List<Card> All = new()
 	{
+		new AmmoCard("Upgraded Rounds", "50 rounds. They pack a little more punch.",
+			Rarity.Common, () => new Magazine("Standard", Rarity.Common, Scenes.StandardRound, fireRateMultiplier: 1.2f)),
+
+		new AmmoCard("Upgraded Rounds", "50 rounds. They pack a little more punch.",
+			Rarity.Common, () => new Magazine("Standard", Rarity.Common, Scenes.StandardRound, fireRateMultiplier: 1.2f)),
+
 		new AmmoCard("Piercing Rounds", "50 rounds. Passes through up to 4 enemies.",
 			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingRound, fireRateMultiplier: 0.8f)),
 
@@ -26,7 +32,7 @@ public static class CardLibrary
 			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
 
 		new AmmoCard("Laser Cells", "50 rounds. Instant beam that burns through everything in a line.",
-			Rarity.Common, () => new Magazine("Laser", Rarity.Common, Scenes.LaserRound)),
+			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound)),
 		new AmmoCard("Piercing Rounds", "50 rounds. Passes through up to 4 enemies.",
 			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingRound, fireRateMultiplier: 0.8f)),
 
@@ -42,7 +48,7 @@ public static class CardLibrary
 			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
 
 		new AmmoCard("Laser Cells", "50 rounds. Instant beam that burns through everything in a line.",
-			Rarity.Common, () => new Magazine("Laser", Rarity.Common, Scenes.LaserRound)),
+			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound)),
 
 		// ---- Sustain --------------------------------------------------------------
 		new HealCard("Field Repair", "Restore 25 health.", Rarity.Rare, heal: 25f),

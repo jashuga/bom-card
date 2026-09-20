@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://qe1a02x0hr2f"]
+
+[ext_resource type="Script" path="res://scripts/Weapons/Ammo/StandardRound.cs" id="1_4w6rs"]
+[ext_resource type="Texture2D" uid="uid://dcgh6xfx10e1p" path="res://assets/ammo/nuke.png" id="2_a7ivo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4mhah"]
+radius = 12.0
+
+[node name="NukeRound" type="Area2D" unique_id=1968644198]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource("1_4w6rs")
+
+[node name="Visual" type="Sprite2D" parent="." unique_id=1111165622]
+self_modulate = Color(0.9, 0.93, 0.97, 1)
+texture = ExtResource("2_a7ivo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1041113597]
+shape = SubResource("CircleShape2D_4mhah")

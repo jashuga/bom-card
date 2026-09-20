@@ -10,7 +10,7 @@ using Godot;
 public partial class LaserRound : Projectile
 {
 	[Export] public float Range = 1400f;
-	[Export] public float BeamWidth = 7f;
+	[Export] public float BeamWidth = 9f;
 	[Export] public int MaxTargets = 16;
 
 	private Vector2 _beamEndLocal;
