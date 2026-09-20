@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c7ff8liadn1wv"]
+[gd_scene format=3 uid="uid://cmcw1k6dh8c7k"]
 
 [ext_resource type="Script" uid="uid://cso0jbvv41hqq" path="res://scripts/Enemies/TankEnemy.cs" id="1_tank"]
 [ext_resource type="Script" uid="uid://c0g5qv3tos1ms" path="res://scripts/Core/Health.cs" id="2_health"]
@@ -9,7 +9,7 @@ radius = 30.0
 
 [node name="TankEnemy" type="CharacterBody2D" unique_id=171854528]
 z_index = 1
-scale = Vector2(0.75, 0.75)
+scale = Vector2(1.25, 1.25)
 collision_layer = 4
 collision_mask = 7
 motion_mode = 1

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://ddypsbqrgiwow"]
+[gd_scene format=3 uid="uid://e6a5mctn3d35"]
 
 [ext_resource type="Script" uid="uid://dmdkx7jy4a0xv" path="res://scripts/Enemies/ShooterEnemy.cs" id="1_shooter"]
 [ext_resource type="Script" uid="uid://c0g5qv3tos1ms" path="res://scripts/Core/Health.cs" id="2_health"]
@@ -9,7 +9,7 @@ radius = 26.666668
 
 [node name="ShooterEnemy" type="CharacterBody2D" unique_id=2054356772]
 z_index = 1
-scale = Vector2(0.75, 0.75)
+scale = Vector2(1.25, 1.25)
 collision_layer = 4
 collision_mask = 7
 motion_mode = 1

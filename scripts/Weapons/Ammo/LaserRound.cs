@@ -9,6 +9,8 @@ using Godot;
 /// </summary>
 public partial class LaserRound : Projectile
 {
+	public override AudioStream ShotSound => Sounds.LaserShoot;
+
 	[Export] public float Range = 1400f;
 	[Export] public float BeamWidth = 7f;
 	[Export] public int MaxTargets = 16;

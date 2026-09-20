@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://diipac5ukwcb6" path="res://scripts/Waves/WaveManager.cs" id="3_waves"]
 [ext_resource type="Script" uid="uid://cx4bvwkefsglf" path="res://scripts/UI/Hud.cs" id="4_hud"]
 [ext_resource type="Script" uid="uid://c7dhywk7cbups" path="res://scripts/UI/DraftScreen.cs" id="5_draft"]
+[ext_resource type="Script" path="res://scripts/Core/Sfx.cs" id="6_sfx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h"]
 size = Vector2(1360, 40)
@@ -59,3 +60,6 @@ script = ExtResource("4_hud")
 
 [node name="DraftScreen" type="CanvasLayer" parent="." unique_id=1702853351]
 script = ExtResource("5_draft")
+
+[node name="Sfx" type="Node" parent="."]
+script = ExtResource("6_sfx")

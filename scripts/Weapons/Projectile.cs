@@ -31,6 +31,9 @@ public abstract partial class Projectile : Area2D
 	/// <summary>Layer this projectile is allowed to damage.</summary>
 	protected uint TargetLayer => Hostile ? Layers.Player : Layers.Enemy;
 
+	/// <summary>Sound played once when a gun fires this ammo. Override per ammo type.</summary>
+	public virtual AudioStream ShotSound => Sounds.StandardShoot;
+
 	/// <summary>Bodies already hit. Pierce/ricochet ammo manages this itself.</summary>
 	protected readonly HashSet<ulong> AlreadyHit = new();
 

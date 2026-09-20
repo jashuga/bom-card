@@ -9,6 +9,8 @@ using Godot;
 /// </summary>
 public partial class RicochetRound : Projectile
 {
+	public override AudioStream ShotSound => Sounds.RicochetShoot;
+
 	[Export] public int MaxBounces = 4;
 
 	private RayCast2D _probe;

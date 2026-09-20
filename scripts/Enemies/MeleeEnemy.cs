@@ -21,7 +21,7 @@ public partial class MeleeEnemy : EnemyBase
 	/// attack range while it's actually resting against the player — physics stops it at 35px.
 	/// </summary>
 	[Export] public float ContactRange = 42f;
-	[Export] public float AttackCooldown = 0.8f;
+	[Export] public float AttackCooldown = 0.6f;
 
 	/// <summary>
 	/// Speed multiplier on the wave they first appear, ramping to 1.0 by
@@ -33,10 +33,10 @@ public partial class MeleeEnemy : EnemyBase
 	[Export] public int FullSpeedWave = 6;
 
 	/// <summary>Inside this it starts winding up; at zero distance it's at full charge speed.</summary>
-	[Export] public float ChargeRange = 260f;
+	[Export] public float ChargeRange = 300f;
 
 	/// <summary>Top speed as a multiple of MoveSpeed, reached only right on top of the player.</summary>
-	[Export] public float ChargeSpeedScale = 1.8f;
+	[Export] public float ChargeSpeedScale = 2.0f;
 
 	/// <summary>Player bullets nearer than this get sidestepped.</summary>
 	[Export] public float DodgeRadius = 110f;
@@ -50,16 +50,18 @@ public partial class MeleeEnemy : EnemyBase
 	/// <summary>Dot cutoff for "that shot is aimed at me" — 0.5 is a 60° cone.</summary>
 	[Export] public float DodgeCone = 0.5f;
 
-	/// <summary>Ring the non-leading chasers hold, well outside arm's reach.</summary>
-	[Export] public float StandoffRange = 135f;
-	[Export] public float StandoffTolerance = 30f;
+	/// <summary>Ring the non-leading chasers hold. Tight enough to crowd you, still outside
+	/// <see cref="ContactRange"/> so they can't all land hits.</summary>
+	[Export] public float StandoffRange = 95f;
+	[Export] public float StandoffTolerance = 22f;
 
-	/// <summary>Speed of a chaser that's waiting its turn. Below 1 so the leader stays the threat.</summary>
-	[Export] public float WaitingSpeedScale = 0.75f;
+	/// <summary>Speed of a chaser that's waiting its turn. Just under 1 so it can hold the ring
+	/// around a moving player instead of trailing behind it.</summary>
+	[Export] public float WaitingSpeedScale = 0.9f;
 
 	/// <summary>How much closer a challenger must be before it takes the lead. Hysteresis — without
 	/// it the role flickers between two enemies at similar range and neither commits.</summary>
-	[Export] public float LeadHandoffMargin = 40f;
+	[Export] public float LeadHandoffMargin = 25f;
 
 	/// <summary>
 	/// The single chaser currently allowed to attack. Static on purpose: it's one role shared
