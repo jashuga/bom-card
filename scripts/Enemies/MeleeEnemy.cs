@@ -14,7 +14,7 @@ using Godot;
 /// </summary>
 public partial class MeleeEnemy : EnemyBase
 {
-	[Export] public float ContactDamage = 9f;
+	[Export] public float ContactDamage = 5f;
 
 	/// <summary>
 	/// Must clear the two colliders' combined radii (18 + 17), or the enemy can never reach
@@ -27,16 +27,16 @@ public partial class MeleeEnemy : EnemyBase
 	/// Speed multiplier on the wave they first appear, ramping to 1.0 by
 	/// <see cref="FullSpeedWave"/>. Early chasers are meant to be outrun; late ones aren't.
 	/// </summary>
-	[Export] public float StartingSpeedScale = 0.6f;
+	[Export] public float StartingSpeedScale = 0.5f;
 
 	/// <summary>Wave at which chasers hit their full MoveSpeed.</summary>
 	[Export] public int FullSpeedWave = 6;
 
 	/// <summary>Inside this it starts winding up; at zero distance it's at full charge speed.</summary>
-	[Export] public float ChargeRange = 300f;
+	[Export] public float ChargeRange = 250f;
 
 	/// <summary>Top speed as a multiple of MoveSpeed, reached only right on top of the player.</summary>
-	[Export] public float ChargeSpeedScale = 2.0f;
+	[Export] public float ChargeSpeedScale = 1.25f;
 
 	/// <summary>Player bullets nearer than this get sidestepped.</summary>
 	[Export] public float DodgeRadius = 110f;

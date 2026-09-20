@@ -4,7 +4,7 @@ using Godot;
 /// <summary>
 /// Every card in the game, and the weighted draft roll. Adding a card = one entry here.
 ///
-/// Magazine sizes come from the rarity (Common 30 / Rare 12 / Epic 4) via
+/// Magazine sizes come from the rarity (Common 50 / Rare 25 / Epic 10) via
 /// <see cref="RarityRules.MagazineSize"/> — don't hardcode them in the factories.
 /// </summary>
 public static class CardLibrary
@@ -26,21 +26,21 @@ public static class CardLibrary
 
 	private static readonly List<Card> All = new()
 	{
-		new AmmoCard("Piercing Rounds", "30 rounds. Passes through up to 4 enemies.",
+		new AmmoCard("Piercing Rounds", "50 rounds. Passes through up to 4 enemies.",
 			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingRound, fireRateMultiplier: 0.8f)),
 
-		// ---- Rare ammo (mag 12) ---------------------------------------------------
-		new AmmoCard("Explosive Shells", "12 rounds. Detonates on impact for area damage.",
+		// ---- Rare ammo (mag 25) ---------------------------------------------------
+		new AmmoCard("Explosive Shells", "25 rounds. Detonates on impact for area damage.",
 			Rarity.Rare, () => new Magazine("Explosive", Rarity.Rare, Scenes.ExplosiveRound)),
 
-		new AmmoCard("Ricochet Rounds", "12 rounds. Bounces off walls up to 4 times.",
+		new AmmoCard("Ricochet Rounds", "25 rounds. Bounces off walls up to 4 times.",
 			Rarity.Rare, () => new Magazine("Ricochet", Rarity.Rare, Scenes.RicochetRound, fireRateMultiplier: 1.2f)),
 
-		// ---- Epic ammo (mag 4) ----------------------------------------------------
-		new AmmoCard("Homing Missiles", "4 rounds. Seeks the nearest enemy and detonates.",
+		// ---- Epic ammo (mag 10) ---------------------------------------------------
+		new AmmoCard("Homing Missiles", "10 rounds. Seeks the nearest enemy and detonates.",
 			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
 
-		new AmmoCard("Laser Cells", "4 rounds. Instant beam that burns through everything in a line.",
+		new AmmoCard("Laser Cells", "10 rounds. Instant beam that burns through everything in a line.",
 			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound)),
 
 		// ---- Sustain --------------------------------------------------------------

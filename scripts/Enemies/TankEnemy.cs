@@ -14,7 +14,7 @@ public partial class TankEnemy : EnemyBase
 
 	/// <summary>Seconds between volleys. Slow enough to read and walk out of.</summary>
 	[Export] public float VolleyInterval = 2.2f;
-	[Export] public float BulletDamage = 7f;
+	[Export] public float BulletDamage = 11f;
 	[Export] public float BulletSpeed = 300f;
 
 	/// <summary>Has to clear the tank's own (large) collider or the shots look like they hatch inside it.</summary>

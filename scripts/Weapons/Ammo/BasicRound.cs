@@ -7,7 +7,7 @@ public partial class BasicRound : Projectile
 	public BasicRound()
 	{
 		Speed = 620f;
-		Damage = 6f;
+		Damage = 9f;
 		Lifetime = 1.6f;
 	}
 }

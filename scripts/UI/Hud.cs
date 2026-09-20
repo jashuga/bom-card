@@ -4,7 +4,7 @@ using Godot;
 /// Readouts in the two gutters either side of the portrait play area:
 ///
 ///   LEFT  — wave number, enemies remaining, the three gun slots
-///   RIGHT — health, shield and speed bars, plus the dash charge
+///   RIGHT — health and shield bars, plus the dash charge
 ///
 /// Near-UNSTYLED: plain Labels and ProgressBars on the project theme, so the look stays a
 /// blank slate. The only thing set here is text SIZE, which is layout rather than style — the
@@ -32,10 +32,8 @@ public partial class Hud : CanvasLayer
 
 	private ProgressBar _healthBar;
 	private ProgressBar _shieldBar;
-	private ProgressBar _speedBar;
 	private Label _healthLabel;
 	private Label _shieldLabel;
-	private Label _speedLabel;
 	private Label _dashLabel;
 
 	private Label _bannerLabel;
@@ -46,7 +44,6 @@ public partial class Hud : CanvasLayer
 	private readonly string[] _slotAmmo = new string[GunLibrary.SlotCount];
 
 	private WeaponController _weapons;
-	private PlayerController _player;
 
 	public override void _Ready()
 	{
@@ -56,34 +53,16 @@ public partial class Hud : CanvasLayer
 		BuildBanner();
 	}
 
-	/// <summary>
-	/// The speed bar tracks live velocity, so it has to be polled — there is no "velocity
-	/// changed" signal, and adding one would fire every physics frame anyway.
-	/// </summary>
-	public override void _Process(double delta)
-	{
-		if (_player == null || !IsInstanceValid(_player))
-			return;
-
-		float speed = _player.Velocity.Length();
-		_speedBar.Value = speed;
-		_speedLabel.Text = $"SPEED  {Mathf.RoundToInt(speed)}";
-	}
-
 	// ---- binding ---------------------------------------------------------------
 
 	public void BindPlayer(PlayerController player)
 	{
-		_player = player;
-
 		player.Health.Changed += OnHealthChanged;
 		OnHealthChanged(player.Health.Current, player.Health.Max, player.Health.Shield);
 
 		player.DashChanged += OnDashChanged;
 		OnDashChanged(player.DashesLeft, player.DashesPerWave);
 
-		// Dashing is the fastest the player can ever go, so it is the honest bar ceiling.
-		_speedBar.MaxValue = Mathf.Max(player.Speed, player.DashSpeed);
 		_shieldBar.MaxValue = Mathf.Max(1f, player.Health.MaxShield);
 
 		_weapons = player.Weapons;
@@ -238,10 +217,6 @@ public partial class Hud : CanvasLayer
 		_shieldLabel = MakeColumnLabel("SHIELD");
 		column.AddChild(_shieldLabel);
 		_shieldBar = AddBar(column);
-
-		_speedLabel = MakeColumnLabel("SPEED");
-		column.AddChild(_speedLabel);
-		_speedBar = AddBar(column);
 
 		_dashLabel = MakeColumnLabel("DASH");
 		column.AddChild(_dashLabel);

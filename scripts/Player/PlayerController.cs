@@ -12,7 +12,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 	[Signal] public delegate void DiedEventHandler();
 	[Signal] public delegate void DashChangedEventHandler(int left, int max);
 
-	[Export] public float Speed = 330f;
+	[Export] public float Speed = 400f;
 	[Export] public float Acceleration = 2600f;
 	[Export] public float Friction = 3000f;
 

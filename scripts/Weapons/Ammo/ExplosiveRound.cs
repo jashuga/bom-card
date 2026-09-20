@@ -9,12 +9,12 @@ public partial class ExplosiveRound : Projectile
 	public override AudioStream ShotSound => Sounds.ExplosiveShoot;
 
 	[Export] public float BlastRadius = 90f;
-	[Export] public float BlastDamage = 22f;
+	[Export] public float BlastDamage = 25f;
 
 	public ExplosiveRound()
 	{
 		Speed = 520f;
-		Damage = 14f;
+		Damage = 22f;
 		Lifetime = 2.5f;
 	}
 

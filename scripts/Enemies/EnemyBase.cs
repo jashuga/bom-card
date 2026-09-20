@@ -9,7 +9,7 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 {
 	[Signal] public delegate void DiedEventHandler(EnemyBase enemy);
 
-	[Export] public float MoveSpeed = 130f;
+	[Export] public float MoveSpeed = 125f;
 	[Export] public float Acceleration = 900f;
 	[Export] public int ScoreValue = 10;
 
