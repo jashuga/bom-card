@@ -6,6 +6,8 @@ using Godot;
 /// </summary>
 public partial class HomingRound : Projectile
 {
+	public override AudioStream ShotSound => Sounds.HomingShoot;
+
 	[Export] public float TurnRate = 6.0f;   // radians/sec
 	[Export] public float SeekRadius = 700f;
 	[Export] public float BlastRadius = 60f;

@@ -83,6 +83,7 @@ public partial class DraftScreen : CanvasLayer
 		if (index < 0 || index >= _offer.Count)
 			return;
 
+		Sfx.Play(Sounds.MenuSelect);
 		Close();
 		EmitSignal(SignalName.CardChosen, index);
 	}

@@ -59,7 +59,12 @@ public partial class TankEnemy : EnemyBase
 
 	private void FireVolley()
 	{
+		// Six bullets, one report — playing the clip six times just clips and distorts.
+		bool first = true;
 		foreach (Vector2 direction in ShotDirections)
-			FireBasicRound(direction, BulletDamage, BulletSpeed, MuzzleOffset);
+		{
+			FireBasicRound(direction, BulletDamage, BulletSpeed, MuzzleOffset, playSound: first);
+			first = false;
+		}
 	}
 }

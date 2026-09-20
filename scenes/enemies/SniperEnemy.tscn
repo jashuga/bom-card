@@ -1,29 +1,30 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://cfy1ju7a6svgl"]
 
-[ext_resource type="Script" path="res://scripts/Enemies/SniperEnemy.cs" id="1_sniper"]
-[ext_resource type="Script" path="res://scripts/Core/Health.cs" id="2_health"]
+[ext_resource type="Script" uid="uid://dol7msukv7rf" path="res://scripts/Enemies/SniperEnemy.cs" id="1_sniper"]
+[ext_resource type="Script" uid="uid://c0g5qv3tos1ms" path="res://scripts/Core/Health.cs" id="2_health"]
 [ext_resource type="Texture2D" uid="uid://cclipumxale6k" path="res://assets/enemies/enemy_4.png" id="3_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 17.0
 
-[node name="SniperEnemy" type="CharacterBody2D"]
+[node name="SniperEnemy" type="CharacterBody2D" unique_id=253680611]
 z_index = 1
-motion_mode = 1
+scale = Vector2(1.25, 1.25)
 collision_layer = 4
 collision_mask = 7
+motion_mode = 1
 script = ExtResource("1_sniper")
 MoveSpeed = 120.0
-TurnSpeed = 6.0
 ScoreValue = 20
+TurnSpeed = 6.0
 
-[node name="Sprite" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="." unique_id=1029867046]
 scale = Vector2(2, 2)
 texture = ExtResource("3_sprite")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=743824124]
 shape = SubResource("CircleShape2D_body")
 
-[node name="Health" type="Node" parent="."]
+[node name="Health" type="Node" parent="." unique_id=1494067935]
 script = ExtResource("2_health")
 Max = 26.0

@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://c7dhywk7cbups" path="res://scripts/UI/DraftScreen.cs" id="5_draft"]
 [ext_resource type="Script" path="res://scripts/Core/Playfield.cs" id="6_field"]
 [ext_resource type="Script" path="res://scripts/UI/TutorialScreen.cs" id="7_tutorial"]
+[ext_resource type="Script" path="res://scripts/Core/Sfx.cs" id="8_sfx"]
 
 [node name="Arena" type="Node2D"]
 script = ExtResource("1_game")
@@ -32,3 +33,5 @@ script = ExtResource("5_draft")
 [node name="TutorialScreen" type="CanvasLayer" parent="."]
 script = ExtResource("7_tutorial")
 
+[node name="Sfx" type="Node" parent="."]
+script = ExtResource("8_sfx")

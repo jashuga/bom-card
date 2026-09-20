@@ -142,6 +142,7 @@ public partial class GameManager : Node2D
 	private void OnPlayerDied()
 	{
 		_gameOver = true;
+		Sfx.Play(Sounds.GameOver, pitchSpread: 0f);
 		_waves.ClearField();
 		_hud.ShowBanner($"DEAD  —  WAVE {Wave}  —  PRESS R", 600f);
 	}
