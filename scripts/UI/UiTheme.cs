@@ -7,7 +7,9 @@ using Godot;
 /// </summary>
 public static class UiTheme
 {
-	public const string FontPath = "res://assets/PixelatedEleganceRegular-ovawB.ttf";
+	/// <summary>Press Start 2P — the 8-bit arcade face (Galaga / Pac-Man era). OFL licensed;
+	/// the licence ships next to it in assets/fonts.</summary>
+	public const string FontPath = "res://assets/fonts/PressStart2P-Regular.ttf";
 
 	public static readonly Color Ink = new("e8edf2");
 	public static readonly Color Muted = new("8a93a0");
@@ -41,9 +43,27 @@ public static class UiTheme
 
 			if (_font == null)
 				GD.Print($"UiTheme: {FontPath} not found — using the default font.");
+			else
+				MakeCrisp(_font);
 
 			return _font;
 		}
+	}
+
+	/// <summary>
+	/// Turn off smoothing. A pixel face is drawn on an 8x8 grid, and antialiasing or hinting
+	/// smears the edges into grey mush — exactly what makes a retro font stop looking retro.
+	/// Done here rather than in the .import so it holds however the file was imported.
+	/// </summary>
+	private static void MakeCrisp(Font font)
+	{
+		if (font is not FontFile file)
+			return;
+
+		file.Antialiasing = TextServer.FontAntialiasing.None;
+		file.Hinting = TextServer.Hinting.None;
+		file.SubpixelPositioning = TextServer.SubpixelPositioning.Disabled;
+		file.MultichannelSignedDistanceField = false;
 	}
 
 	public static Label MakeLabel(string text, int size, Color? color = null)
