@@ -30,9 +30,7 @@ public partial class Playfield : Node2D
 	}
 
 	/// <summary>
-	/// A plain one-pixel box round the play area so you can see where the portrait screen is.
-	/// Sharp joints and no antialiasing, so the corners stay square pixels rather than a
-	/// smoothed miter.
+	/// A plain 2px box round the play area so you can see where the portrait screen is.
 	/// Placeholder, not art — delete this node or replace it once the real backdrop exists.
 	/// </summary>
 	private void BuildOutline()
@@ -43,11 +41,7 @@ public partial class Playfield : Node2D
 		AddChild(new Line2D
 		{
 			Name = "Outline",
-			Width = 1f,
-			Antialiased = false,
-			JointMode = Line2D.LineJointMode.Sharp,
-			BeginCapMode = Line2D.LineCapMode.None,
-			EndCapMode = Line2D.LineCapMode.None,
+			Width = 2f,
 			ZIndex = -10,
 			Points = new[]
 			{

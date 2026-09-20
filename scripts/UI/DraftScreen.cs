@@ -66,9 +66,7 @@ public partial class DraftScreen : CanvasLayer
 			_titleLabels[i].Text = card.Title;
 			_bodyLabels[i].Text = card.Description;
 
-			// Full-strength tint even when idle: at one pixel wide, the old half-alpha border
-			// washed out to grey and the rarity stopped reading as blue or purple at all.
-			_buttons[i].AddThemeStyleboxOverride("normal", UiTheme.Box(UiTheme.Panel, tint));
+			_buttons[i].AddThemeStyleboxOverride("normal", UiTheme.Box(UiTheme.Panel, tint * new Color(1f, 1f, 1f, 0.5f)));
 			_buttons[i].AddThemeStyleboxOverride("hover", UiTheme.Box(UiTheme.PanelActive, tint));
 			_buttons[i].AddThemeStyleboxOverride("pressed", UiTheme.Box(UiTheme.PanelActive, tint));
 			_buttons[i].AddThemeStyleboxOverride("focus", UiTheme.Box(UiTheme.PanelActive, tint));

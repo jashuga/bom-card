@@ -26,21 +26,21 @@ public static class CardLibrary
 
 	private static readonly List<Card> All = new()
 	{
-		new AmmoCard("Piercing Rounds", "30 rounds. Passes through up to 4 enemies.",
+		new AmmoCard("Piercing Rounds", "50 rounds. Passes through up to 4 enemies.",
 			Rarity.Common, () => new Magazine("Piercing", Rarity.Common, Scenes.PiercingRound, fireRateMultiplier: 0.8f)),
 
 		// ---- Rare ammo (mag 12) ---------------------------------------------------
-		new AmmoCard("Explosive Shells", "12 rounds. Detonates on impact for area damage.",
+		new AmmoCard("Explosive Shells", "25 rounds. Detonates on impact for area damage.",
 			Rarity.Rare, () => new Magazine("Explosive", Rarity.Rare, Scenes.ExplosiveRound)),
 
-		new AmmoCard("Ricochet Rounds", "12 rounds. Bounces off walls up to 4 times.",
+		new AmmoCard("Ricochet Rounds", "25 rounds. Bounces off walls up to 4 times.",
 			Rarity.Rare, () => new Magazine("Ricochet", Rarity.Rare, Scenes.RicochetRound, fireRateMultiplier: 1.2f)),
 
 		// ---- Epic ammo (mag 4) ----------------------------------------------------
-		new AmmoCard("Homing Missiles", "4 rounds. Seeks the nearest enemy and detonates.",
+		new AmmoCard("Homing Missiles", "10 rounds. Seeks the nearest enemy and detonates.",
 			Rarity.Epic, () => new Magazine("Homing", Rarity.Epic, Scenes.HomingRound, fireRateMultiplier: 0.8f)),
 
-		new AmmoCard("Laser Cells", "4 rounds. Instant beam that burns through everything in a line.",
+		new AmmoCard("Laser Cells", "10 rounds. Instant beam that burns through everything in a line.",
 			Rarity.Epic, () => new Magazine("Laser", Rarity.Epic, Scenes.LaserRound)),
 
 		// ---- Sustain --------------------------------------------------------------

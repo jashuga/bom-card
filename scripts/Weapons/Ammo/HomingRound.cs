@@ -58,7 +58,7 @@ public partial class HomingRound : Projectile
 
 	private void Detonate()
 	{
-		Blast.Apply(this, GlobalPosition, BlastRadius, BlastDamage, TargetLayer, Shooter);
+		Blast.Apply(this, Position, BlastRadius, BlastDamage, TargetLayer, Shooter);
 		Despawn();
 	}
 }
