@@ -55,7 +55,7 @@ public partial class TankEnemy : EnemyBase
 
 	private void FireVolley()
 	{
-		foreach (Vector2 diagonal in Diagonals)
-			FireBasicRound(diagonal, BulletDamage, BulletSpeed, MuzzleOffset);
+		foreach (Vector2 direction in ShotDirections)
+			FireBasicRound(direction, BulletDamage, BulletSpeed, MuzzleOffset);
 	}
 }

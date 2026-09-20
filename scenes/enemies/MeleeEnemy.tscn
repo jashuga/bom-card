@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bpy76gy11ej67"]
+[gd_scene format=3 uid="uid://bs4y3xwvs7nsn"]
 
 [ext_resource type="Script" uid="uid://dfnyktpiumfk" path="res://scripts/Enemies/MeleeEnemy.cs" id="1_melee"]
 [ext_resource type="Script" uid="uid://c0g5qv3tos1ms" path="res://scripts/Core/Health.cs" id="2_health"]
@@ -9,19 +9,19 @@ radius = 18.0
 
 [node name="MeleeEnemy" type="CharacterBody2D" unique_id=1986744478]
 z_index = 1
-scale = Vector2(0.75, 0.75)
+scale = Vector2(1.25, 1.25)
 collision_layer = 4
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("1_melee")
-MoveSpeed = 215.0
-Acceleration = 1800.0
-TurnSpeed = 18.0
+MoveSpeed = 260.0
+Acceleration = 2200.0
+TurnSpeed = 22.0
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1883105332]
 scale = Vector2(2, 2)
-flip_v = true
 texture = ExtResource("3_sprite")
+flip_v = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=272548247]
 shape = SubResource("CircleShape2D_body")

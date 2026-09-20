@@ -6,6 +6,8 @@ using Godot;
 /// </summary>
 public partial class ExplosiveRound : Projectile
 {
+	public override AudioStream ShotSound => Sounds.ExplosiveShoot;
+
 	[Export] public float BlastRadius = 90f;
 	[Export] public float BlastDamage = 22f;
 

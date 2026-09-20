@@ -5,6 +5,8 @@ using Godot;
 /// </summary>
 public partial class PiercingRound : Projectile
 {
+	public override AudioStream ShotSound => Sounds.PiercingShoot;
+
 	[Export] public int MaxPierces = 3;
 
 	private int _pierced;

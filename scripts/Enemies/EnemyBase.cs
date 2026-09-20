@@ -119,7 +119,8 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 	/// <paramref name="muzzleOffset"/> should clear your own collider so the shot reads as leaving
 	/// the body.
 	/// </summary>
-	protected void FireBasicRound(Vector2 direction, float damage, float speed, float muzzleOffset = 26f)
+	protected void FireBasicRound(Vector2 direction, float damage, float speed, float muzzleOffset = 26f,
+		bool playSound = true)
 	{
 		Node container = BulletContainer;
 		if (container == null || direction == Vector2.Zero)
@@ -138,6 +139,9 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 		bullet.Position = container is Node2D node ? node.ToLocal(muzzle) : muzzle;
 
 		container.AddChild(bullet);
+
+		if (playSound)
+			Sfx.Play(Sounds.EnemyShoot);
 	}
 
 	/// <summary>
@@ -192,6 +196,7 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 
 		Health.Damage(amount);
 		_flashFor = 0.08f;
+		Sfx.Play(Sounds.EnemyHurt);
 
 		if (Sprite != null)
 			Sprite.Modulate = new Color(3f, 3f, 3f);
