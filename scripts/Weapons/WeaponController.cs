@@ -54,13 +54,13 @@ public partial class WeaponController : Node2D
 
 	// ---- public API -------------------------------------------------------------
 
+	
 	public void SelectSlot(int slot)
 	{
 		if (slot < 0 || slot >= Guns.Length || slot == ActiveSlot)
 			return;
 
 		ActiveSlot = slot;
-		Sfx.Play(Sounds.Equip);
 		EmitSignal(SignalName.WeaponChanged, slot);
 		EmitAmmo(slot);
 	}
@@ -81,8 +81,6 @@ public partial class WeaponController : Node2D
 
 		Vector2 aim = AimDirection == Vector2.Zero ? Vector2.Up : AimDirection.Normalized();
 
-		Projectile first = null;
-
 		for (int i = 0; i < shot.Projectiles; i++)
 		{
 			float offset = 0f;
@@ -92,16 +90,8 @@ public partial class WeaponController : Node2D
 				offset = Mathf.DegToRad(Mathf.Lerp(-shot.SpreadDegrees * 0.5f, shot.SpreadDegrees * 0.5f, t));
 			}
 
-<<<<<<< HEAD
 			Spawn(shot.BulletScene, aim.Rotated(offset));
-=======
-			first ??= Spawn(shot.BulletScene, aim.Rotated(offset), shot.DamageMultiplier);
->>>>>>> 63ad041 (Add sound effects)
 		}
-
-		// One sound per trigger pull, not per pellet — a shotgun blast is one noise.
-		if (first != null)
-			Sfx.Play(Hostile ? Sounds.EnemyShoot : first.ShotSound);
 
 		EmitSignal(SignalName.Fired, ActiveSlot);
 		EmitAmmo(ActiveSlot);
@@ -121,7 +111,6 @@ public partial class WeaponController : Node2D
 			if (!Guns[slot].TryLoad(magazine))
 				continue;
 
-			Sfx.Play(Sounds.Equip);
 			EmitAmmo(slot);
 			return true;
 		}
@@ -139,14 +128,10 @@ public partial class WeaponController : Node2D
 
 	// ---- internals ---------------------------------------------------------------
 
-<<<<<<< HEAD
 	private void Spawn(PackedScene scene, Vector2 direction)
-=======
-	private Projectile Spawn(PackedScene scene, Vector2 direction, float damageMultiplier)
->>>>>>> 63ad041 (Add sound effects)
 	{
 		if (scene == null || _bulletContainer == null)
-			return null;
+			return;
 
 		var bullet = scene.Instantiate<Projectile>();
 		bullet.Direction = direction;
@@ -157,7 +142,6 @@ public partial class WeaponController : Node2D
 		bullet.Position = _bulletContainer is Node2D container2D ? container2D.ToLocal(muzzle) : muzzle;
 
 		_bulletContainer.AddChild(bullet);
-		return bullet;
 	}
 
 	private void OnMagazineEmptied(Gun gun)

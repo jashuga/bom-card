@@ -18,7 +18,7 @@ public static class GunLibrary
 	public static Gun[] CreateLoadout(bool everyGunHasBasicAmmo = false) => new[]
 	{
 		new Gun("Sidearm", Rarity.Common, 4.0f, Scenes.BasicRound, true),
-		new Gun("Repeater", Rarity.Rare, 2.2f, Scenes.BasicRound, everyGunHasBasicAmmo),
-		new Gun("Hand Cannon", Rarity.Epic, 0.8f, Scenes.BasicRound, everyGunHasBasicAmmo),
+		new Gun("Repeater", Rarity.Rare, 2.5f, Scenes.BasicRound, everyGunHasBasicAmmo),
+		new Gun("Hand Cannon", Rarity.Epic, 1.5f, Scenes.BasicRound, everyGunHasBasicAmmo),
 	};
 }

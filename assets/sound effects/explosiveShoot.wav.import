@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://vrw6ybfcj3h"
+path="res://.godot/imported/explosiveShoot.wav-5fb05f445ea9e5be73288f1fb3d408af.sample"
+
+[deps]
+
+source_file="res://assets/sound effects/explosiveShoot.wav"
+dest_files=["res://.godot/imported/explosiveShoot.wav-5fb05f445ea9e5be73288f1fb3d408af.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
