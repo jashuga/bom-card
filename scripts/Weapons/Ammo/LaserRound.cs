@@ -22,7 +22,7 @@ public partial class LaserRound : Projectile
 	[Export] public float Range = 1400f;
 
 	/// <summary>Both the drawn width AND the hit width — see <see cref="BurnEverything"/>.</summary>
-	[Export] public float BeamWidth = 7f;
+	[Export] public float BeamWidth = 48f;
 
 	/// <summary>Cap on results from the beam query. A safety valve, not a design limit.</summary>
 	[Export] public int MaxTargets = 32;
@@ -34,7 +34,7 @@ public partial class LaserRound : Projectile
 	{
 		Speed = 0f;
 		Damage = Vaporise;
-		Lifetime = 0.16f;
+		Lifetime = 0.22f;
 	}
 
 	protected override void OnSpawn()
@@ -50,7 +50,9 @@ public partial class LaserRound : Projectile
 
 		// Step 1: where does the beam stop? Walls only. A zero-width ray is correct here,
 		// because a wall spans the whole beam anyway.
-		var wallQuery = PhysicsRayQueryParameters2D.Create(origin, end, Layers.World);
+		// Barrier as well as World: the top edge is open to ENEMIES walking in, but the beam
+		// should still terminate at the edge of the cabinet rather than firing off-screen.
+		var wallQuery = PhysicsRayQueryParameters2D.Create(origin, end, Layers.World | Layers.Barrier);
 		wallQuery.CollideWithAreas = false;
 
 		Godot.Collections.Dictionary wall = space.IntersectRay(wallQuery);
@@ -112,9 +114,12 @@ public partial class LaserRound : Projectile
 
 	public override void _Draw()
 	{
-		var core = new Color(1f, 0.95f, 1f, _fade);
-		var glow = new Color(0.78f, 0.49f, 1f, _fade * 0.45f);
-		DrawLine(Vector2.Zero, _beamEndLocal, glow, BeamWidth * 2.4f, true);
-		DrawLine(Vector2.Zero, _beamEndLocal, core, BeamWidth, true);
+		// Drawn width MUST equal BeamWidth, because that is exactly the rectangle that kills.
+		// The old version drew a 2.4x halo around the core, which made the beam look far wider
+		// than it hit — the same lie that made this weapon feel broken. The halo is now inside
+		// the hit width, with a white-hot core inside that.
+		DrawLine(Vector2.Zero, _beamEndLocal, new Color(0.78f, 0.49f, 1f, _fade * 0.45f), BeamWidth, true);
+		DrawLine(Vector2.Zero, _beamEndLocal, new Color(0.92f, 0.80f, 1f, _fade * 0.85f), BeamWidth * 0.55f, true);
+		DrawLine(Vector2.Zero, _beamEndLocal, new Color(1f, 0.98f, 1f, _fade), BeamWidth * 0.22f, true);
 	}
 }
