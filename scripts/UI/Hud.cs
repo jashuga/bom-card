@@ -111,7 +111,7 @@ public partial class Hud : CanvasLayer
 		string gun = _weapons.Guns[slot].Name;
 		string ammo = capacity > 0 ? $"{ammoName}  {rounds}/{capacity}" : ammoName;
 
-		_slotText[slot] = $"{slot + 1}  {gun}  —  {ammo}";
+		_slotText[slot] = $"{slot + 1}  {gun} \n    {ammo}";
 		RefreshSlots();
 	}
 
@@ -127,7 +127,7 @@ public partial class Hud : CanvasLayer
 	private void RefreshSlots()
 	{
 		for (int i = 0; i < _slotLabels.Length; i++)
-			_slotLabels[i].Text = (i == _weapons.ActiveSlot ? "> " : " ") + (_slotText[i] ?? $"{i + 1}");
+			_slotLabels[i].Text = (i == _weapons.ActiveSlot ? "> " : " ") + (i == _weapons.ActiveSlot ? _slotText[i].Replace("\n", "\n ") : _slotText[i]);
 	}
 
 	private void OnWaveStarted(int wave, int enemyCount)

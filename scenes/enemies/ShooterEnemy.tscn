@@ -8,13 +8,13 @@
 radius = 26.666668
 
 [node name="ShooterEnemy" type="CharacterBody2D" unique_id=2054356772]
+process_mode = 1
 z_index = 1
 scale = Vector2(1.25, 1.25)
 collision_layer = 4
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("1_shooter")
-MoveSpeed = 125.0
 Acceleration = 1100.0
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=2111063035]

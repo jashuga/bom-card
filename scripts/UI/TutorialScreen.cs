@@ -61,7 +61,7 @@ public partial class TutorialScreen : CanvasLayer
 			return;
 
 		// Anything that means "go" closes it, so nobody gets stuck on the help screen.
-		if (@event.IsActionPressed("shoot") || @event.IsActionPressed("ui_accept")
+		if (@event.IsActionPressed("all_actions") || @event.IsActionPressed("ui_accept")
 			|| @event.IsActionPressed("ui_cancel") || @event.IsActionPressed("tutorial"))
 		{
 			GetViewport().SetInputAsHandled();

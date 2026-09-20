@@ -9,6 +9,7 @@
 radius = 17.0
 
 [node name="Player" type="CharacterBody2D" unique_id=3749906]
+process_mode = 1
 z_index = 2
 scale = Vector2(1.25, 1.25)
 collision_layer = 2
