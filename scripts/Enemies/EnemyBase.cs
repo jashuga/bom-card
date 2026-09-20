@@ -84,6 +84,12 @@ public abstract partial class EnemyBase : CharacterBody2D, IDamageable
 
 	private void ClampToArena()
 	{
+		// The box drawn by Playfield is the only place enemies should be seen — spawning
+		// happens above it (see SpawnOutsideMargin), and the screen extends a bit further
+		// still, so without this an incoming enemy is visible above the box's top edge for
+		// a stretch before it actually crosses into the play area.
+		Visible = Position.Y >= 0f;
+
 		if (!_entered)
 		{
 			if (Position.Y < ArenaMargin)

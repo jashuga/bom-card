@@ -62,6 +62,11 @@ public abstract partial class Projectile : Area2D
 			return;
 		}
 		Move(delta);
+
+		// The box's left/right/bottom walls despawn anything that reaches them, but the top
+		// stays open so enemies can walk in — the one gap a shot can fly out through and
+		// keep travelling, visible above the play area, until its lifetime runs out.
+		Visible = Position.Y >= 0f;
 	}
 
 	// ---- overridable behaviour -------------------------------------------------
