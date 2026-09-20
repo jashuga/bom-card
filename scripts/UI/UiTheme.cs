@@ -9,7 +9,7 @@ public static class UiTheme
 {
 	/// <summary>Press Start 2P — the 8-bit arcade face (Galaga / Pac-Man era). OFL licensed;
 	/// the licence ships next to it in assets/fonts.</summary>
-	public const string FontPath = "res://assets/fonts/PressStart2P-Regular.ttf";
+	public const string FontPath = "res://assets/fonts/PressStart2P-vaV7.ttf";
 
 	public static readonly Color Ink = new("e8edf2");
 	public static readonly Color Muted = new("8a93a0");
@@ -89,11 +89,18 @@ public static class UiTheme
 		button.AddThemeColorOverride("font_color", color ?? Ink);
 	}
 
-	public static StyleBoxFlat Box(Color background, Color? border = null, int borderWidth = 2, int corner = 6)
+	/// <summary>
+	/// A panel box. Square corners, a single-pixel border and NO antialiasing — a rounded or
+	/// smoothed edge is the one thing that reads as modern next to an 8x8 pixel font.
+	/// AntiAliasing is the important one: StyleBoxFlat smooths its edges by default, which
+	/// leaves a soft half-lit fringe on what should be a hard one-pixel line.
+	/// </summary>
+	public static StyleBoxFlat Box(Color background, Color? border = null, int borderWidth = 1, int corner = 0)
 	{
 		var box = new StyleBoxFlat
 		{
 			BgColor = background,
+			AntiAliasing = false,
 			CornerRadiusTopLeft = corner,
 			CornerRadiusTopRight = corner,
 			CornerRadiusBottomLeft = corner,
@@ -132,16 +139,16 @@ public static class UiTheme
 		return bar;
 	}
 
-	/// <summary>A stylebox with no content margins — for bars, where padding would skew the fill.</summary>
+	/// <summary>
+	/// A stylebox with no content margins — for bars, where padding would skew the fill.
+	/// Square and unsmoothed for the same reason as <see cref="Box"/>.
+	/// </summary>
 	private static StyleBoxFlat Flat(Color color)
 	{
 		return new StyleBoxFlat
 		{
 			BgColor = color,
-			CornerRadiusTopLeft = 3,
-			CornerRadiusTopRight = 3,
-			CornerRadiusBottomLeft = 3,
-			CornerRadiusBottomRight = 3,
+			AntiAliasing = false,
 		};
 	}
 }

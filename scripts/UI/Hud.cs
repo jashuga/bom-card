@@ -6,14 +6,24 @@ using Godot;
 ///   LEFT  — wave number, enemies remaining, the three gun slots
 ///   RIGHT — health, shield and speed bars, plus the dash charge
 ///
-/// Deliberately UNSTYLED: plain Labels and ProgressBars with Godot's default theme, so the
-/// look is a blank slate. Nothing here sets a font, colour or stylebox — positioning and
-/// wiring only. Column geometry comes from <see cref="ArenaLayout"/>.
+/// Near-UNSTYLED: plain Labels and ProgressBars on the project theme, so the look stays a
+/// blank slate. The only thing set here is text SIZE, which is layout rather than style — the
+/// project font is a monospace arcade face roughly one em per character, so a line that fit
+/// the gutter in a proportional font no longer does. Column geometry comes from
+/// <see cref="ArenaLayout"/>.
 /// </summary>
 public partial class Hud : CanvasLayer
 {
 	/// <summary>Inset from the screen edge and from the play area.</summary>
 	private const float Margin = 24f;
+
+	/// <summary>
+	/// Gutter text size. At ~1em per glyph this fits about 24 characters in a column, which is
+	/// what every readout below is written to stay inside.
+	/// </summary>
+	private const int TextSize = 12;
+
+	private const int BannerSize = 20;
 
 	private static float ColumnWidth => ArenaLayout.SideColumnWidth - Margin * 2f;
 
@@ -31,7 +41,9 @@ public partial class Hud : CanvasLayer
 	private Label _bannerLabel;
 
 	private readonly Label[] _slotLabels = new Label[GunLibrary.SlotCount];
-	private readonly string[] _slotText = new string[GunLibrary.SlotCount];
+	private readonly Label[] _slotAmmoLabels = new Label[GunLibrary.SlotCount];
+	private readonly string[] _slotGun = new string[GunLibrary.SlotCount];
+	private readonly string[] _slotAmmo = new string[GunLibrary.SlotCount];
 
 	private WeaponController _weapons;
 	private PlayerController _player;
@@ -116,10 +128,8 @@ public partial class Hud : CanvasLayer
 
 	private void OnAmmoChanged(int slot, int rounds, int capacity, string ammoName)
 	{
-		string gun = _weapons.Guns[slot].Name;
-		string ammo = capacity > 0 ? $"{ammoName}  {rounds}/{capacity}" : ammoName;
-
-		_slotText[slot] = $"{slot + 1}  {gun}  —  {ammo}";
+		_slotGun[slot] = _weapons.Guns[slot].Name;
+		_slotAmmo[slot] = capacity > 0 ? $"{ammoName} {rounds}/{capacity}" : ammoName;
 		RefreshSlots();
 	}
 
@@ -131,11 +141,17 @@ public partial class Hud : CanvasLayer
 	/// label — writing the marker in its own pass meant firing erased it.
 	///
 	/// The marker is a leading ">" rather than a colour so it survives a restyle.
+	///
+	/// Gun and ammo go on separate lines: "3  Hand Cannon  —  Explosive  12/12" is 37 glyphs,
+	/// which is half again wider than the gutter in a one-em-per-character font.
 	/// </summary>
 	private void RefreshSlots()
 	{
 		for (int i = 0; i < _slotLabels.Length; i++)
-			_slotLabels[i].Text = (i == _weapons.ActiveSlot ? "> " : "  ") + (_slotText[i] ?? $"{i + 1}");
+		{
+			_slotLabels[i].Text = (i == _weapons.ActiveSlot ? "> " : "  ") + $"{i + 1} {_slotGun[i]}";
+			_slotAmmoLabels[i].Text = "    " + _slotAmmo[i];
+		}
 	}
 
 	private void OnWaveStarted(int wave, int enemyCount)
@@ -156,6 +172,25 @@ public partial class Hud : CanvasLayer
 	/// leaves the box pinned at the right edge and growing off-screen, which clips the whole
 	/// column. The layout is a known fixed size, so the position is simply computed.
 	/// </summary>
+	/// <summary>
+	/// A gutter label. ClipText is the important part: without it a Label's minimum width is
+	/// its text width, so one long string stretches the whole column out over the play area
+	/// and the game stops looking centred. Clipped, the column can never exceed its gutter.
+	/// </summary>
+	private static Label MakeColumnLabel(string text)
+	{
+		var label = new Label
+		{
+			Text = text,
+			ClipText = true,
+			CustomMinimumSize = new Vector2(ColumnWidth, 0f),
+			MouseFilter = Control.MouseFilterEnum.Ignore,
+		};
+
+		label.AddThemeFontSizeOverride("font_size", TextSize);
+		return label;
+	}
+
 	private VBoxContainer PinColumn(float x)
 	{
 		var column = new VBoxContainer
@@ -174,18 +209,21 @@ public partial class Hud : CanvasLayer
 	{
 		VBoxContainer column = PinColumn(Margin);
 
-		_waveLabel = new Label { Text = "WAVE  1" };
+		_waveLabel = MakeColumnLabel("WAVE  1");
 		column.AddChild(_waveLabel);
 
-		_enemyLabel = new Label { Text = "ENEMIES  0" };
+		_enemyLabel = MakeColumnLabel("ENEMIES  0");
 		column.AddChild(_enemyLabel);
 
-		column.AddChild(new Label { Text = string.Empty });
+		column.AddChild(MakeColumnLabel(string.Empty));
 
 		for (int slot = 0; slot < _slotLabels.Length; slot++)
 		{
-			_slotLabels[slot] = new Label { Text = $"{slot + 1}" };
+			_slotLabels[slot] = MakeColumnLabel($"{slot + 1}");
 			column.AddChild(_slotLabels[slot]);
+
+			_slotAmmoLabels[slot] = MakeColumnLabel(string.Empty);
+			column.AddChild(_slotAmmoLabels[slot]);
 		}
 	}
 
@@ -193,19 +231,19 @@ public partial class Hud : CanvasLayer
 	{
 		VBoxContainer column = PinColumn(ArenaLayout.RightColumnX + Margin);
 
-		_healthLabel = new Label { Text = "HEALTH" };
+		_healthLabel = MakeColumnLabel("HEALTH");
 		column.AddChild(_healthLabel);
 		_healthBar = AddBar(column);
 
-		_shieldLabel = new Label { Text = "SHIELD" };
+		_shieldLabel = MakeColumnLabel("SHIELD");
 		column.AddChild(_shieldLabel);
 		_shieldBar = AddBar(column);
 
-		_speedLabel = new Label { Text = "SPEED" };
+		_speedLabel = MakeColumnLabel("SPEED");
 		column.AddChild(_speedLabel);
 		_speedBar = AddBar(column);
 
-		_dashLabel = new Label { Text = "DASH" };
+		_dashLabel = MakeColumnLabel("DASH");
 		column.AddChild(_dashLabel);
 	}
 
@@ -225,18 +263,27 @@ public partial class Hud : CanvasLayer
 		return bar;
 	}
 
-	/// <summary>Wave banners sit over the play area, which is centred between the gutters.</summary>
+	/// <summary>
+	/// Wave banners sit over the play area, which is centred by construction.
+	///
+	/// The label spans the full screen and centres its own text, rather than sitting in a
+	/// PlayWidth-wide box pinned at the play area's left edge. That box only centred text
+	/// narrower than itself: a longer banner grew the box rightwards from its fixed left edge
+	/// and pushed the text off-centre — which is exactly what a wider font caused.
+	/// </summary>
 	private void BuildBanner()
 	{
-		var center = new CenterContainer
+		_bannerLabel = new Label
 		{
+			Text = string.Empty,
+			Visible = false,
+			HorizontalAlignment = HorizontalAlignment.Center,
 			MouseFilter = Control.MouseFilterEnum.Ignore,
-			CustomMinimumSize = new Vector2(ArenaLayout.PlayWidth, 0f),
-			Position = ArenaLayout.PlayOrigin + new Vector2(0f, ArenaLayout.PlayHeight * 0.16f),
+			Position = new Vector2(0f, ArenaLayout.PlayOrigin.Y + ArenaLayout.PlayHeight * 0.16f),
+			Size = new Vector2(ArenaLayout.ScreenWidth, 0f),
 		};
-		AddChild(center);
 
-		_bannerLabel = new Label { Text = string.Empty, Visible = false };
-		center.AddChild(_bannerLabel);
+		_bannerLabel.AddThemeFontSizeOverride("font_size", BannerSize);
+		AddChild(_bannerLabel);
 	}
 }
