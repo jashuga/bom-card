@@ -58,6 +58,7 @@ public partial class GameManager : Node2D
 	private void StartNextWave()
 	{
 		Wave++;
+		_player.RefillDashes();
 		_waves.StartWave(Wave);
 	}
 

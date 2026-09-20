@@ -9,6 +9,7 @@ public partial class Hud : CanvasLayer
 	private ProgressBar _healthBar;
 	private ProgressBar _shieldBar;
 	private Label _healthLabel;
+	private Label _dashLabel;
 	private Label _waveLabel;
 	private Label _enemyLabel;
 	private Label _bannerLabel;
@@ -34,6 +35,9 @@ public partial class Hud : CanvasLayer
 	{
 		player.Health.Changed += OnHealthChanged;
 		OnHealthChanged(player.Health.Current, player.Health.Max, player.Health.Shield);
+
+		player.DashChanged += OnDashChanged;
+		OnDashChanged(player.DashesLeft, player.DashesPerWave);
 
 		_weapons = player.Weapons;
 		_weapons.AmmoChanged += OnAmmoChanged;
@@ -76,6 +80,12 @@ public partial class Hud : CanvasLayer
 		_healthLabel.Text = shield > 0f
 			? $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}   +{Mathf.CeilToInt(shield)}"
 			: $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
+	}
+
+	private void OnDashChanged(int left, int max)
+	{
+		_dashLabel.Text = left > 0 ? $"DASH  READY  ({left}/{max})" : "DASH  SPENT";
+		_dashLabel.AddThemeColorOverride("font_color", left > 0 ? UiTheme.ShieldFill : UiTheme.Muted);
 	}
 
 	private void OnAmmoChanged(int slot, int rounds, int capacity, string ammoName)
@@ -138,6 +148,9 @@ public partial class Hud : CanvasLayer
 		_shieldBar = UiTheme.MakeBar(UiTheme.ShieldFill, 260f, 7f);
 		_shieldBar.Visible = false;
 		column.AddChild(_shieldBar);
+
+		_dashLabel = UiTheme.MakeLabel("DASH  READY", 14, UiTheme.Muted);
+		column.AddChild(_dashLabel);
 	}
 
 	private void BuildWaveReadout()

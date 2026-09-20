@@ -1,7 +1,7 @@
 using Godot;
 
 /// <summary>
-/// WASD to move, LEFT/RIGHT arrows to turn, Space to shoot, 1/2/3 to pick a gun.
+/// WASD to move, LEFT/RIGHT arrows to turn, Space to shoot, Shift to dash, 1/2/3 to pick a gun.
 ///
 /// Turret controls: movement is world-relative (WASD always strafes), and facing is a
 /// separate axis you steer with the arrows. Shots and the sprite both follow the facing.
@@ -10,6 +10,7 @@ using Godot;
 public partial class PlayerController : CharacterBody2D, IDamageable
 {
 	[Signal] public delegate void DiedEventHandler();
+	[Signal] public delegate void DashChangedEventHandler(int left, int max);
 
 	[Export] public float Speed = 330f;
 	[Export] public float Acceleration = 2600f;
@@ -17,6 +18,15 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
 	/// <summary>Seconds of immunity after taking a hit, so melee contact can't chain-kill.</summary>
 	[Export] public float InvulnerabilityTime = 0.45f;
+
+	/// <summary>Dashes granted at the start of every wave. They do not carry over.</summary>
+	[Export] public int DashesPerWave = 1;
+	[Export] public float DashSpeed = 1150f;
+	[Export] public float DashDuration = 0.16f;
+
+	/// <summary>Dash charges left this wave.</summary>
+	public int DashesLeft { get; private set; }
+	public bool IsDashing => _dashingFor > 0.0;
 
 	/// <summary>Facing at the start of a run. Up = straight up the screen.</summary>
 	[Export] public Vector2 StartingFacing = Vector2.Up;
@@ -35,6 +45,8 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
 	private Node2D _sprite;
 	private double _invulnerableFor;
+	private double _dashingFor;
+	private Vector2 _dashDirection;
 
 	public override void _Ready()
 	{
@@ -52,7 +64,16 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 		_sprite = GetNodeOrNull<Node2D>("Sprite");
 
 		CollisionLayer = Layers.Player;
-		CollisionMask = Layers.World | Layers.Enemy;
+		CollisionMask = Layers.World | Layers.Barrier | Layers.Enemy;
+
+		RefillDashes();
+	}
+
+	/// <summary>Called by the run loop at the start of each wave. Charges don't accumulate.</summary>
+	public void RefillDashes()
+	{
+		DashesLeft = Mathf.Max(0, DashesPerWave);
+		EmitSignal(SignalName.DashChanged, DashesLeft, DashesPerWave);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -66,6 +87,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
 		if (!IsAlive)
 		{
+			_dashingFor = 0.0;
 			Velocity = Vector2.Zero;
 			MoveAndSlide();
 			return;
@@ -84,7 +106,16 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
 		Vector2 input = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
-		if (input != Vector2.Zero)
+		if (Input.IsActionJustPressed("dash"))
+			TryDash(input);
+
+		if (IsDashing)
+		{
+			// Dash overrides steering entirely — you commit to the direction you left on.
+			_dashingFor -= delta;
+			Velocity = _dashDirection * DashSpeed;
+		}
+		else if (input != Vector2.Zero)
 		{
 			Velocity = Velocity.MoveToward(input * Speed, Acceleration * (float)delta);
 		}
@@ -98,6 +129,25 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 		Weapons.AimDirection = AimDirection;
 		if (Input.IsActionPressed("shoot"))
 			Weapons.TryFire();
+	}
+
+	/// <summary>
+	/// Spend a charge and launch. Dashes where you're steering, or straight ahead if you're
+	/// standing still, so it's never a wasted charge.
+	/// </summary>
+	private void TryDash(Vector2 input)
+	{
+		if (DashesLeft <= 0 || IsDashing)
+			return;
+
+		Vector2 direction = input != Vector2.Zero ? input.Normalized() : AimDirection;
+		if (direction == Vector2.Zero)
+			return;
+
+		_dashDirection = direction;
+		_dashingFor = DashDuration;
+		DashesLeft--;
+		EmitSignal(SignalName.DashChanged, DashesLeft, DashesPerWave);
 	}
 
 	/// <summary>
