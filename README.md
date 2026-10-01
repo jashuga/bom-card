@@ -1,5 +1,5 @@
 # Bom-card
-A fun arcade style shooter where you customize your playthrough by picking from ammo and upgrade options while battling through waves of enemies.
+A fun arcade style shooter where you customize your playthrough by picking from ammo and upgrade options while battling through waves of enemies. The game can be downloaded [here](https://bom-card.itch.io/bom-card).
 
 ### Team Members
 - Ian McDowell (ianstagramcd@gmail.com)
